@@ -1,8 +1,0 @@
-# Top-level cmake list
-CMAKE_MINIMUM_REQUIRED( version 2.8 )
-
-PROJECT( scidi_wrapper )
-
-add_subdirectory( wrapper )
-add_subdirectory( tests )
-add_subdirectory( dep )
