@@ -1,0 +1,15 @@
+# Top-level cmake list
+CMAKE_MINIMUM_REQUIRED( version 2.8 )
+
+PROJECT( wrapper )
+
+set (CMAKE_C_FLAGS "$CMAKE_C_FLAGS -fPIC")
+set (CMAKE_CXX_FLAGS "$CMAKE_CXX_FLAGS -fPIC")
+
+file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.h" "*.hpp" "*.cpp")
+
+include_directories(${CMAKE_SOURCE_DIR}/dep/scidi/include)
+
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
+
+target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/dep/scidi/lib/scidi.a)
