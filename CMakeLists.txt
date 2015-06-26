@@ -1,5 +1,5 @@
 # Top-level cmake list
-CMAKE_MINIMUM_REQUIRED( version 2.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 
 PROJECT( scidi_wrapper )
 
