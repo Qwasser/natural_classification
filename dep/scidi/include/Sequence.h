@@ -6,10 +6,9 @@ Store raw representation of objects
 #include <vector>
 #include <string>
 
-#include "../setup.h"
 typedef const char* input_t;
 
-class SCIDI_API Sequence
+class Sequence
 {
 public:
 		Sequence(std::string Name = "unnamed");
