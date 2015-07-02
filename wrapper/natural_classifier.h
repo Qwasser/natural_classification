@@ -1,3 +1,13 @@
-class ScidiWrappper {
+#include <string>
+#include <vector>
 
+#include "SEQStorage.h"
+
+class ScidiWrappper {
+public:
+    void setData(const std::vector<std::vector<std::string> > & data);
+    std::vector<std::vector<std::string> > getData();
+
+private:
+    SEQStorage data;
 };

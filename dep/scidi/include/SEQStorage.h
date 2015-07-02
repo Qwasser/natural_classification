@@ -17,7 +17,7 @@ typedef SEQSElem* p_object; /* pointer on a object*/
 typedef std::vector<c_object> c_objects; /* coded objects*/
 typedef c_objects* p_objects; /* pointer on coded objects*/
 
-class SCIDI_API SEQStorage
+class SEQStorage
 {
 public:
 	SEQStorage();

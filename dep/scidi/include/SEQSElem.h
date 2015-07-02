@@ -5,11 +5,11 @@ When a raw object has been parsed store values in this class
 Store coded and separated values of object
 Also store class id
 ---------------------------------------------------------------------------*/
-#include "../setup.h"
+#include "setup.h"
 #include <string.h>
 #include <string>
 
-class SCIDI_API SEQSElem
+class SEQSElem
 {
 public:
 	SEQSElem();
