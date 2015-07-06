@@ -5,7 +5,7 @@
 
 #include "Sequence.h"
 
-#include <wrapper/natural_classifier.h>
+#include <wrapper/scidi_wrapper.h>
 
 std::vector<std::vector<std::string> > makeTestInput() {
     std::vector<std::vector<std::string> > test_input;

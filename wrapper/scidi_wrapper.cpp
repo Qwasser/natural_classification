@@ -8,7 +8,7 @@
 #include "SEQStorage.h"
 #include "Sequence.h"
 
-#include "natural_classifier.h"
+#include "scidi_wrapper.h"
 
 void ScidiWrapper::setData(const std::vector<std::vector<std::string> > & input_data) {
     Sequence * storage = new Sequence [input_data.size()];
