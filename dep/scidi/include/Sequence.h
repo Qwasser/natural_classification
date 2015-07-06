@@ -18,7 +18,7 @@ public:
 		
 		void Append(std::string token);
 		void Append(input_t token);
-		void SetName(std::string name){ m_Name = name; };
+        void SetName(std::string name){ m_Name = name; };
 		long GetLength(){ return m_Length; };
 		std::string GetName(){ return m_Name; };
 		std::string GetSeq();
