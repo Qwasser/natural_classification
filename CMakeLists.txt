@@ -9,3 +9,4 @@ set( CMAKE_CXX_FLAGS "-O2 -DNDEBUG -Wall -pedantic -std=c++0x -rdynamic" CACHE S
 add_subdirectory( wrapper )
 add_subdirectory( tests )
 add_subdirectory( dep )
+add_subdirectory( led_data_generator )
