@@ -7,6 +7,9 @@
 
 #include "SEQStorage.h"
 #include "Sequence.h"
+#include "NaiveGenerator.h"
+#include "Tunnels.h"
+#include "Thread.h"
 
 #include "scidi_wrapper.h"
 
@@ -34,4 +37,25 @@ std::vector<std::vector<std::string> > ScidiWrapper::getData() {
         }
     }
     return result;
+}
+
+void ScidiWrapper::makeRules(double conf_int_value, double yule_value, double min_cp, size_t depth) {
+    current_rule_settings.SearchDepth = depth;
+    current_rule_settings.FisherSumBound = conf_int_value;
+    current_rule_settings.MinProb = min_cp;
+    current_rule_settings.YuleQUpBound = yule_value;
+    current_rule_settings.StartPos = 0;
+    current_rule_settings.FinishPos = data->getWidth() - 1;
+
+    this->rule_storage = new RulesStorage();
+    current_rule_settings.RulesContainer = this->rule_storage;
+
+    NaiveRuleGenerator rule_generator = NaiveRuleGenerator();
+    rule_generator.SetInput(data);
+
+    Thread * dummy_thread = new Thread();
+    ThreadCommand * dummy_command = new ThreadCommand(dummy_thread);
+    rule_generator.setCommand(dummy_command);
+
+    rule_generator.GenRules(current_rule_settings);
 }

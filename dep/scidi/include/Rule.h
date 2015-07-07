@@ -8,13 +8,13 @@
 #include "CodeTable.h"
 #include "SEQStorage.h"
 #include "Constants.h"
-#include "../setup.h"
+#include "setup.h"
 
 #define MAXDEFLEN 8
 
 //#pragma pack(push,1)
 
-class SCIDI_API RuleBase
+class RuleBase
 {
 public:
 	virtual UINT getRuleLength() = 0;

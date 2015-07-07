@@ -14,7 +14,7 @@
 #include <cassert>
 
 #include "Runnable.h"
-#include "../setup.h"
+#include "setup.h"
 #include "Callback.h"
 
 using namespace std;

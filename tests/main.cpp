@@ -42,9 +42,17 @@ void setDataTest() {
     }
 }
 
+void genRulesTest() {
+    std::vector<std::vector<std::string> > test_data = makeTestInput();
+    ScidiWrapper wrapper;
+    wrapper.setData(test_data);
+    wrapper.makeRules(0.5, 0.5, 0.5, 2);
+}
+
 int main() {
     scidiLinkageTest();
     setDataTest();
+    genRulesTest();
     return 0;
 }
 
