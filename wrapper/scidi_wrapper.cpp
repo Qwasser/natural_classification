@@ -10,6 +10,7 @@
 #include "NaiveGenerator.h"
 #include "Tunnels.h"
 #include "Thread.h"
+#include "Callback.h"
 
 #include "scidi_wrapper.h"
 
@@ -47,7 +48,10 @@ void ScidiWrapper::makeRules(double conf_int_value, double yule_value, double mi
     current_rule_settings.StartPos = 0;
     current_rule_settings.FinishPos = data->getWidth() - 1;
 
-    this->rule_storage = new RulesStorage();
+    current_rule_settings.DeclineDecision = true;
+    current_rule_settings.DeclinePremise = true;
+
+    this->rule_storage = new RulesStorage(data->getWidth(), data->getCodesCount());
     current_rule_settings.RulesContainer = this->rule_storage;
 
     NaiveRuleGenerator rule_generator = NaiveRuleGenerator();
@@ -57,5 +61,11 @@ void ScidiWrapper::makeRules(double conf_int_value, double yule_value, double mi
     ThreadCommand * dummy_command = new ThreadCommand(dummy_thread);
     rule_generator.setCommand(dummy_command);
 
+    sdEvent * dummy_event = new sdEvent();
+    rule_generator.setCallback(dummy_event);
     rule_generator.GenRules(current_rule_settings);
+
+    delete dummy_thread;
+    delete dummy_command;
+    delete dummy_event;
 }
