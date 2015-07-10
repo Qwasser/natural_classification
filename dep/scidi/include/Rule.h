@@ -25,26 +25,30 @@ public:
 	virtual float getCP() = 0;
 	virtual char getTTSign() = 0;
 	void getChainStr(char* ChainString)
-	{
-		std::ostringstream out;
-		CodeTable* Context = CodeTable::Instance();
-		
-		for (auto i = 0; i < getRuleLength(); i++)
-		{
-			Predicate Pi = Chain(i);
-			out << (Pi.Shift + 1) << "=" << (Pi.Sign < 0 ? " not " : "") << Context->Decode(Pi.Value);
-			out << (i < getRuleLength() - 1 ? " & " : "");
-		}
-
-		out << " => ";
-		out << (getTTPos() + 1) << "=" << (getTTSign() < 0 ? " not " : "") << Context->Decode(getTTValue());
-
-		std::string conv = out.str();
-		if( conv.length() > MYMAXSTR )
-			conv = conv.substr(0, MYMAXSTR-1);
+	{	
 		ChainString[0] = '\0';
-		strcpy(ChainString, conv.c_str());
+        strcpy(ChainString, getChainStr().c_str());
 	}
+    std::string getChainStr()
+    {
+        std::ostringstream out;
+        CodeTable* Context = CodeTable::Instance();
+
+        for (auto i = 0; i < getRuleLength(); i++)
+        {
+            Predicate Pi = Chain(i);
+            out << (Pi.Shift + 1) << "=" << (Pi.Sign < 0 ? " not " : "") << Context->Decode(Pi.Value);
+            out << (i < getRuleLength() - 1 ? " & " : "");
+        }
+
+        out << " => ";
+        out << (getTTPos() + 1) << "=" << (getTTSign() < 0 ? " not " : "") << Context->Decode(getTTValue());
+
+        std::string conv = out.str();
+        if( conv.length() > MYMAXSTR )
+            conv = conv.substr(0, MYMAXSTR-1);
+        return conv;
+    }
 };
 
 
