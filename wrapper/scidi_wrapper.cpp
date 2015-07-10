@@ -69,3 +69,11 @@ void ScidiWrapper::makeRules(double conf_int_value, double yule_value, double mi
     delete dummy_command;
     delete dummy_event;
 }
+
+std::vector<std::string> ScidiWrapper::getRules(){
+    std::vector<std::string> rule_strings;
+    for (ruleID iter = rule_storage->begin(); iter != rule_storage->end(); ++iter) {
+        rule_strings.push_back(iter->getChainStr());
+    }
+    return rule_strings;
+}
