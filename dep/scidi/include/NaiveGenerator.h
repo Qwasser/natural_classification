@@ -20,6 +20,8 @@ public:
 	void ParseStorage();
 	Rule* GetOutput();
 	unsigned long GetOutputSize(){ return FinishRulesStorage->getSize(); };
+    long GetInputSize(){ return sz_mySEQStorage; };
+
 	void GenRules(RuleSettings p);
 	void SetSettings(RuleSettings p);
 	void GenRules(void);

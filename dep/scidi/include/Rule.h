@@ -9,6 +9,7 @@
 #include "SEQStorage.h"
 #include "Constants.h"
 #include "setup.h"
+#include <iostream>
 
 #define MAXDEFLEN 8
 
@@ -25,7 +26,8 @@ public:
 	virtual float getCP() = 0;
 	virtual char getTTSign() = 0;
 	void getChainStr(char* ChainString)
-	{	
+    {
+        std::cout << "lal";
 		ChainString[0] = '\0';
         strcpy(ChainString, getChainStr().c_str());
 	}

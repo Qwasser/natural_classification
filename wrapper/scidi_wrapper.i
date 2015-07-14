@@ -8,6 +8,8 @@
 
 // Instantiate templates used by example
 namespace std {
+   %template(DoubleVector) vector<double>;
+   %template(IntVector) vector<int>;
    %template(StringVector) vector<string>;
    %template(StringStringVector) vector< vector<string> >;
 }

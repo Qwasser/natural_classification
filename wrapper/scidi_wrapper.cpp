@@ -56,6 +56,7 @@ void ScidiWrapper::makeRules(double conf_int_value, double yule_value, double mi
 
     NaiveRuleGenerator rule_generator = NaiveRuleGenerator();
     rule_generator.SetInput(data);
+    rule_generator.SetSettings(current_rule_settings);
 
     Thread * dummy_thread = new Thread();
     ThreadCommand * dummy_command = new ThreadCommand(dummy_thread);
@@ -63,7 +64,9 @@ void ScidiWrapper::makeRules(double conf_int_value, double yule_value, double mi
 
     sdEvent * dummy_event = new sdEvent();
     rule_generator.setCallback(dummy_event);
-    rule_generator.GenRules(current_rule_settings);
+
+    dummy_thread->start();
+    rule_generator.GenRules();
 
     delete dummy_thread;
     delete dummy_command;
@@ -77,3 +80,30 @@ std::vector<std::string> ScidiWrapper::getRules(){
     }
     return rule_strings;
 }
+
+std::vector<double> ScidiWrapper::getCriteriaValues(bool need_yule) {
+    std::vector<double> criteria_values(rule_storage->getSize());
+    unsigned long m[2][2];
+
+    double other_criteria;
+    size_t counter = 0;
+    for (ruleID iter = rule_storage->begin(); iter != rule_storage->end(); ++iter) {
+        if (need_yule) {
+            rule_storage->ConvertFromLinkToRule(&(*iter))->GetFisher(data, m, std::vector<int>(0), other_criteria, criteria_values[counter]);
+        } else {
+            rule_storage->ConvertFromLinkToRule(&(*iter))->GetFisher(data, m, std::vector<int>(0), criteria_values[counter], other_criteria);
+        }
+        ++counter;
+    }
+
+    return criteria_values;
+}
+
+std::vector<double> ScidiWrapper::getFisher() {
+    return getCriteriaValues();
+}
+
+std::vector<double> ScidiWrapper::getYule() {
+    return getCriteriaValues(true);
+}
+
