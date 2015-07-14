@@ -15,20 +15,22 @@ std::vector<std::vector<std::string> > makeTestInput() {
     test_input.push_back(std::vector<std::string> ());
 
     test_input[0].push_back("a");
-    test_input[0].push_back("a");
+    test_input[0].push_back("b");
     test_input[0].push_back("c");
     test_input[0].push_back("c");
 
     test_input[1].push_back("a");
-    test_input[1].push_back("a");
+    test_input[1].push_back("b");
     test_input[1].push_back("c");
     test_input[1].push_back("c");
 
+    test_input[2].push_back("a");
     test_input[2].push_back("b");
     test_input[2].push_back("b");
     test_input[2].push_back("d");
     test_input[2].push_back("d");
 
+    test_input[3].push_back("a");
     test_input[3].push_back("b");
     test_input[3].push_back("b");
     test_input[3].push_back("d");
@@ -61,6 +63,7 @@ void genRulesTest() {
     ScidiWrapper wrapper;
     wrapper.setData(test_data);
     wrapper.makeRules(0.25, 0.5, 0.7, 2);
+    std::cout << "Rules" << std::endl;
     std::vector<std::string> rules = wrapper.getRules();
     for (auto rule : rules) {
         std::cout << rule << std::endl;

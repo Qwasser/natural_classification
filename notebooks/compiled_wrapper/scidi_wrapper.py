@@ -98,6 +98,100 @@ class SwigPyIterator(_object):
 SwigPyIterator_swigregister = _scidi_wrapper.SwigPyIterator_swigregister
 SwigPyIterator_swigregister(SwigPyIterator)
 
+class DoubleVector(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, DoubleVector, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, DoubleVector, name)
+    __repr__ = _swig_repr
+    def iterator(self): return _scidi_wrapper.DoubleVector_iterator(self)
+    def __iter__(self): return self.iterator()
+    def __nonzero__(self): return _scidi_wrapper.DoubleVector___nonzero__(self)
+    def __bool__(self): return _scidi_wrapper.DoubleVector___bool__(self)
+    def __len__(self): return _scidi_wrapper.DoubleVector___len__(self)
+    def pop(self): return _scidi_wrapper.DoubleVector_pop(self)
+    def __getslice__(self, *args): return _scidi_wrapper.DoubleVector___getslice__(self, *args)
+    def __setslice__(self, *args): return _scidi_wrapper.DoubleVector___setslice__(self, *args)
+    def __delslice__(self, *args): return _scidi_wrapper.DoubleVector___delslice__(self, *args)
+    def __delitem__(self, *args): return _scidi_wrapper.DoubleVector___delitem__(self, *args)
+    def __getitem__(self, *args): return _scidi_wrapper.DoubleVector___getitem__(self, *args)
+    def __setitem__(self, *args): return _scidi_wrapper.DoubleVector___setitem__(self, *args)
+    def append(self, *args): return _scidi_wrapper.DoubleVector_append(self, *args)
+    def empty(self): return _scidi_wrapper.DoubleVector_empty(self)
+    def size(self): return _scidi_wrapper.DoubleVector_size(self)
+    def clear(self): return _scidi_wrapper.DoubleVector_clear(self)
+    def swap(self, *args): return _scidi_wrapper.DoubleVector_swap(self, *args)
+    def get_allocator(self): return _scidi_wrapper.DoubleVector_get_allocator(self)
+    def begin(self): return _scidi_wrapper.DoubleVector_begin(self)
+    def end(self): return _scidi_wrapper.DoubleVector_end(self)
+    def rbegin(self): return _scidi_wrapper.DoubleVector_rbegin(self)
+    def rend(self): return _scidi_wrapper.DoubleVector_rend(self)
+    def pop_back(self): return _scidi_wrapper.DoubleVector_pop_back(self)
+    def erase(self, *args): return _scidi_wrapper.DoubleVector_erase(self, *args)
+    def __init__(self, *args): 
+        this = _scidi_wrapper.new_DoubleVector(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def push_back(self, *args): return _scidi_wrapper.DoubleVector_push_back(self, *args)
+    def front(self): return _scidi_wrapper.DoubleVector_front(self)
+    def back(self): return _scidi_wrapper.DoubleVector_back(self)
+    def assign(self, *args): return _scidi_wrapper.DoubleVector_assign(self, *args)
+    def resize(self, *args): return _scidi_wrapper.DoubleVector_resize(self, *args)
+    def insert(self, *args): return _scidi_wrapper.DoubleVector_insert(self, *args)
+    def reserve(self, *args): return _scidi_wrapper.DoubleVector_reserve(self, *args)
+    def capacity(self): return _scidi_wrapper.DoubleVector_capacity(self)
+    __swig_destroy__ = _scidi_wrapper.delete_DoubleVector
+    __del__ = lambda self : None;
+DoubleVector_swigregister = _scidi_wrapper.DoubleVector_swigregister
+DoubleVector_swigregister(DoubleVector)
+
+class IntVector(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, IntVector, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, IntVector, name)
+    __repr__ = _swig_repr
+    def iterator(self): return _scidi_wrapper.IntVector_iterator(self)
+    def __iter__(self): return self.iterator()
+    def __nonzero__(self): return _scidi_wrapper.IntVector___nonzero__(self)
+    def __bool__(self): return _scidi_wrapper.IntVector___bool__(self)
+    def __len__(self): return _scidi_wrapper.IntVector___len__(self)
+    def pop(self): return _scidi_wrapper.IntVector_pop(self)
+    def __getslice__(self, *args): return _scidi_wrapper.IntVector___getslice__(self, *args)
+    def __setslice__(self, *args): return _scidi_wrapper.IntVector___setslice__(self, *args)
+    def __delslice__(self, *args): return _scidi_wrapper.IntVector___delslice__(self, *args)
+    def __delitem__(self, *args): return _scidi_wrapper.IntVector___delitem__(self, *args)
+    def __getitem__(self, *args): return _scidi_wrapper.IntVector___getitem__(self, *args)
+    def __setitem__(self, *args): return _scidi_wrapper.IntVector___setitem__(self, *args)
+    def append(self, *args): return _scidi_wrapper.IntVector_append(self, *args)
+    def empty(self): return _scidi_wrapper.IntVector_empty(self)
+    def size(self): return _scidi_wrapper.IntVector_size(self)
+    def clear(self): return _scidi_wrapper.IntVector_clear(self)
+    def swap(self, *args): return _scidi_wrapper.IntVector_swap(self, *args)
+    def get_allocator(self): return _scidi_wrapper.IntVector_get_allocator(self)
+    def begin(self): return _scidi_wrapper.IntVector_begin(self)
+    def end(self): return _scidi_wrapper.IntVector_end(self)
+    def rbegin(self): return _scidi_wrapper.IntVector_rbegin(self)
+    def rend(self): return _scidi_wrapper.IntVector_rend(self)
+    def pop_back(self): return _scidi_wrapper.IntVector_pop_back(self)
+    def erase(self, *args): return _scidi_wrapper.IntVector_erase(self, *args)
+    def __init__(self, *args): 
+        this = _scidi_wrapper.new_IntVector(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    def push_back(self, *args): return _scidi_wrapper.IntVector_push_back(self, *args)
+    def front(self): return _scidi_wrapper.IntVector_front(self)
+    def back(self): return _scidi_wrapper.IntVector_back(self)
+    def assign(self, *args): return _scidi_wrapper.IntVector_assign(self, *args)
+    def resize(self, *args): return _scidi_wrapper.IntVector_resize(self, *args)
+    def insert(self, *args): return _scidi_wrapper.IntVector_insert(self, *args)
+    def reserve(self, *args): return _scidi_wrapper.IntVector_reserve(self, *args)
+    def capacity(self): return _scidi_wrapper.IntVector_capacity(self)
+    __swig_destroy__ = _scidi_wrapper.delete_IntVector
+    __del__ = lambda self : None;
+IntVector_swigregister = _scidi_wrapper.IntVector_swigregister
+IntVector_swigregister(IntVector)
+
 class StringVector(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, StringVector, name, value)
@@ -200,6 +294,10 @@ class ScidiWrapper(_object):
     __repr__ = _swig_repr
     def setData(self, *args): return _scidi_wrapper.ScidiWrapper_setData(self, *args)
     def getData(self): return _scidi_wrapper.ScidiWrapper_getData(self)
+    def makeRules(self, *args): return _scidi_wrapper.ScidiWrapper_makeRules(self, *args)
+    def getRules(self): return _scidi_wrapper.ScidiWrapper_getRules(self)
+    def getFisher(self): return _scidi_wrapper.ScidiWrapper_getFisher(self)
+    def getYule(self): return _scidi_wrapper.ScidiWrapper_getYule(self)
     def __init__(self): 
         this = _scidi_wrapper.new_ScidiWrapper()
         try: self.this.append(this)
