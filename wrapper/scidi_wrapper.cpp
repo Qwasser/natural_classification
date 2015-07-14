@@ -41,7 +41,7 @@ std::vector<std::vector<std::string> > ScidiWrapper::getData() {
 }
 
 void ScidiWrapper::makeRules(double conf_int_value, double yule_value, double min_cp, size_t depth) {
-    current_rule_settings.SearchDepth = depth;
+    current_rule_settings.SearchDepth = (int)depth;
     current_rule_settings.FisherSumBound = conf_int_value;
     current_rule_settings.MinProb = min_cp;
     current_rule_settings.YuleQUpBound = yule_value;
@@ -75,5 +75,6 @@ std::vector<std::string> ScidiWrapper::getRules(){
     for (ruleID iter = rule_storage->begin(); iter != rule_storage->end(); ++iter) {
         rule_strings.push_back(iter->getChainStr());
     }
+    std::cout << rule_strings.size() << std::endl;
     return rule_strings;
 }
