@@ -13,7 +13,7 @@ namespace FileManager
 	int CountLines(const char * file);
 	SCIDI_API SEQStorage* ReadCSVData(const char* name);
 	SCIDI_API int ReadPlainTextRules(const char* file, SEQStorage* data, RulesStorage* rules);
-	SCIDI_API void WriteXMLRules(Rule* set, unsigned long length, const char* name);
+//	SCIDI_API void WriteXMLRules(Rule* set, unsigned long length, const char* name);
 }
 //---------------------------------------------------------------------------
 #include <fstream>

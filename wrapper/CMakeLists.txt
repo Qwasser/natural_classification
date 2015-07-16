@@ -8,11 +8,17 @@ file(GLOB_RECURSE SOURCES "*.h" "*.hpp" "*.cpp")
 
 include_directories(${CMAKE_SOURCE_DIR}/dep/scidi/include)
 
+set(wxWidgets_CONFIGURATION mswu)
+
+find_package(wxWidgets COMPONENTS xml core base REQUIRED)
+
+include(${wxWidgets_USE_FILE})
+
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/dep/scidi/lib)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} scidi.a)
+target_link_libraries(${PROJECT_NAME} scidi.a ${wxWidgets_LIBRARIES})
 
 # Swig wrapper
 FIND_PACKAGE(SWIG REQUIRED)

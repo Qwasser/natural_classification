@@ -27,7 +27,7 @@ public:
 };
 
 
-class SCIDI_API Classificator : public ObjReporter
+class Classificator : public ObjReporter
 {
 public:
 	Classificator();

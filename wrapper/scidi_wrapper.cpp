@@ -8,6 +8,7 @@
 #include "SEQStorage.h"
 #include "Sequence.h"
 #include "NaiveGenerator.h"
+#include "Classificator.h"
 #include "Tunnels.h"
 #include "Thread.h"
 #include "Callback.h"
@@ -106,5 +107,40 @@ std::vector<double> ScidiWrapper::getFisher() {
 
 std::vector<double> ScidiWrapper::getYule() {
     return getCriteriaValues(true);
+}
+
+void ScidiWrapper::makeClasses() {
+    ClassificatorSettings settings = {
+        /* .IdealizType= */ __IDEALIZTYPE_OFFICIAL_,
+        /* .ObjsSource= */ __IDEALSOURCE_ORIGINOBJS_
+        /* .nRecClass= */
+        /* .RecSourcePos= */
+        /* .RecSourceNeg= */
+    };
+
+      Classificator * clf = new Classificator();
+
+      ideal_storage = new CIdelObject*[ data->getLength() ];
+//    data->ClearClasses();
+
+//    clf.Create(data, rule_storage, ideal_storage);
+
+//    clf.lObjsStorageCounter = data->getLength();
+//    clf.SetSource(settings.ObjsSource);
+//    clf.SetType(settings.IdealizType);
+
+//    sdEvent * dummy_event = new sdEvent();
+//    clf.setCallback(dummy_event);
+
+
+//    Thread * dummy_thread = new Thread();
+//    ThreadCommand * dummy_command = new ThreadCommand(dummy_thread);
+//    clf.setCommand(dummy_command);
+
+//    clf.GenClasses();
+
+//    delete dummy_thread;
+//    delete dummy_command;
+//    delete dummy_event;
 }
 
