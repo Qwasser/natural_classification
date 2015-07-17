@@ -117,29 +117,38 @@ void ScidiWrapper::makeClasses() {
         /* .RecSourceNeg= */
     };
 
-      Classificator * clf = new Classificator();
+    Classificator clf;
 
-      ideal_storage = new CIdelObject*[ data->getLength() ];
-//    data->ClearClasses();
+    ideal_storage = new CIdelObject*[ data->getLength() ];
 
-//    clf.Create(data, rule_storage, ideal_storage);
+    data->ClearClasses();
 
-//    clf.lObjsStorageCounter = data->getLength();
-//    clf.SetSource(settings.ObjsSource);
-//    clf.SetType(settings.IdealizType);
+    clf.Create(data, rule_storage, ideal_storage);
 
-//    sdEvent * dummy_event = new sdEvent();
-//    clf.setCallback(dummy_event);
+    clf.lObjsStorageCounter = 0;
+    clf.SetSource(settings.ObjsSource);
+    clf.SetType(settings.IdealizType);
+
+    sdEvent * dummy_event = new sdEvent();
+    clf.setCallback(dummy_event);
 
 
-//    Thread * dummy_thread = new Thread();
-//    ThreadCommand * dummy_command = new ThreadCommand(dummy_thread);
-//    clf.setCommand(dummy_command);
+    Thread * dummy_thread = new Thread();
+    ThreadCommand * dummy_command = new ThreadCommand(dummy_thread);
+    clf.setCommand(dummy_command);
 
-//    clf.GenClasses();
+    clf.GenClasses();
 
-//    delete dummy_thread;
-//    delete dummy_command;
-//    delete dummy_event;
+    delete dummy_thread;
+    delete dummy_command;
+    delete dummy_event;
+}
+
+std::vector<int> ScidiWrapper::getClasses() {
+    std::vector<int> classes(data->getLength());
+    for (size_t i = 0; i < data->getLength(); ++i) {
+        classes[i] = data->getClass(i);
+    }
+    return classes;
 }
 

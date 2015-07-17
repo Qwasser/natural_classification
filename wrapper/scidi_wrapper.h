@@ -17,6 +17,7 @@ public:
     std::vector<std::string> getRules();
 
     void makeClasses();
+    std::vector<int> getClasses();
 
     std::vector<double> getFisher();
     std::vector<double> getYule();
