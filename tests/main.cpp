@@ -70,10 +70,23 @@ void genRulesTest() {
     }
 }
 
+void genClassesTest() {
+    std::vector<std::vector<std::string> > test_data = makeTestInput();
+    ScidiWrapper wrapper;
+    wrapper.setData(test_data);
+    wrapper.makeRules(0.25, 0.5, 0.7, 2);
+    wrapper.makeClasses();
+    std::vector<int> classes = wrapper.getClasses();
+    for (int c : classes) {
+        std::cout << c << std::endl;
+    }
+}
+
 int main() {
     scidiLinkageTest();
     setDataTest();
     genRulesTest();
+    genClassesTest();
     return 0;
 }
 

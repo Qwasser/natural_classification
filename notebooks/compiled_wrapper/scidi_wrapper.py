@@ -296,6 +296,8 @@ class ScidiWrapper(_object):
     def getData(self): return _scidi_wrapper.ScidiWrapper_getData(self)
     def makeRules(self, *args): return _scidi_wrapper.ScidiWrapper_makeRules(self, *args)
     def getRules(self): return _scidi_wrapper.ScidiWrapper_getRules(self)
+    def makeClasses(self): return _scidi_wrapper.ScidiWrapper_makeClasses(self)
+    def getClasses(self): return _scidi_wrapper.ScidiWrapper_getClasses(self)
     def getFisher(self): return _scidi_wrapper.ScidiWrapper_getFisher(self)
     def getYule(self): return _scidi_wrapper.ScidiWrapper_getYule(self)
     def __init__(self): 
