@@ -18,17 +18,19 @@ public:
 
     void makeClasses();
     std::vector<int> getClasses();
+    std::vector<std::vector<std::string> > getIdealObjects();
 
     std::vector<double> getFisher();
     std::vector<double> getYule();
 
 private:
     SEQStorage * data = NULL;
-    RulesStorage * rule_storage = NULL;
-    CIdelObject** ideal_storage = NULL;
 
+    RulesStorage * rule_storage = NULL;
     RuleSettings current_rule_settings;
-    std::vector<int> classes;
+
+    CIdelObject** ideal_storage = NULL;
+    size_t ideal_storage_size;
 
     std::vector<double> getCriteriaValues(bool need_yule = false);
 };

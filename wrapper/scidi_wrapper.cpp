@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <numeric>
 
 #include <cstddef>
 #include <cassert>
@@ -151,5 +152,37 @@ std::vector<int> ScidiWrapper::getClasses() {
         classes[i] = data->getClass(i);
     }
     return classes;
+}
+
+std::vector<std::vector<std::string> > ScidiWrapper::getIdealObjects() {
+    std::vector<std::vector<std::string> > ideals;
+
+    for (size_t i = 0; i < data->getLength(); ++i) {
+        size_t class_id = data->getClass(i);
+
+        CIdelObject* o = ideal_storage[class_id];
+
+        std::vector<std::string> current_ideal;
+
+        for (auto l = 0; l < data->getWidth(); ++l)
+        {
+            std::vector<std::string> possible_values;
+
+            for (auto c = 0; c < data->getCodesCount(); ++c) {
+                if (o->isBelong(l, c))
+                {
+                    std::string v(data->Decode(c));
+                    possible_values.push_back(v);
+                }
+            }
+
+            string concatenated_possible_values =
+                    accumulate( possible_values.begin(), possible_values.end(), string("|") );
+            current_ideal.push_back(concatenated_possible_values);
+        }
+
+        ideals.push_back(current_ideal);
+    }
+    return ideals;
 }
 
