@@ -140,6 +140,7 @@ void ScidiWrapper::makeClasses() {
     clf.setCommand(dummy_command);
 
     clf.GenClasses();
+    ideal_storage_size = clf.GetOutputSize();
 
     delete dummy_thread;
     delete dummy_command;
@@ -157,8 +158,7 @@ std::vector<int> ScidiWrapper::getClasses() {
 std::vector<std::vector<std::string> > ScidiWrapper::getIdealObjects() {
     std::vector<std::vector<std::string> > ideals;
 
-    for (size_t i = 0; i < data->getLength(); ++i) {
-        size_t class_id = data->getClass(i);
+    for (size_t class_id = 0; class_id < ideal_storage_size; ++class_id) {
 
         CIdelObject* o = ideal_storage[class_id];
 
