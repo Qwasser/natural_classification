@@ -80,16 +80,22 @@ void genClassesTest() {
     }
 }
 
+void parseRulesTest() {
+    std::vector<std::vector<std::string> > test_data = makeTestInput();
+    ScidiWrapper wrapper;
+    wrapper.setData(test_data);
+    wrapper.makeRules(0.25, 0.5, 0.7, 2);
+    std::string r_string = "2=a & 3= not c => 1=a";
+//    Rule * r = wrapper.parseRule(r_string);
+    //std::cout << r->getChainStr() << std::endl;
+}
+
 int main() {
     scidiLinkageTest();
     setDataTest();
-//    genRulesTest();
-//    genClassesTest();
-
-    std::string r_string = "2=a & 3= not c => 1=a";
-
-    std::cout << r_string << std::endl;
-    Rule r;
+    genRulesTest();
+    genClassesTest();
+ //   parseRulesTest();
     return 0;
 }
 
