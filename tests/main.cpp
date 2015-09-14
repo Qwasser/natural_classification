@@ -28,12 +28,10 @@ std::vector<std::vector<std::string> > makeTestInput() {
     test_input[2].push_back("b");
     test_input[2].push_back("b");
     test_input[2].push_back("d");
-    test_input[2].push_back("d");
 
     test_input[3].push_back("a");
     test_input[3].push_back("b");
     test_input[3].push_back("b");
-    test_input[3].push_back("d");
     test_input[3].push_back("d");
 
     return test_input;
@@ -85,8 +83,13 @@ void genClassesTest() {
 int main() {
     scidiLinkageTest();
     setDataTest();
-    genRulesTest();
-    genClassesTest();
+//    genRulesTest();
+//    genClassesTest();
+
+    std::string r_string = "2=a & 3= not c => 1=a";
+
+    std::cout << r_string << std::endl;
+    Rule r;
     return 0;
 }
 
