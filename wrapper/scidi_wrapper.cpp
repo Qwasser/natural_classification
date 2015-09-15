@@ -193,3 +193,19 @@ std::vector<std::vector<std::string> > ScidiWrapper::getIdealObjects() {
     return ideals;
 }
 
+void ScidiWrapper::addRuleFromString(std::string rule_str) {
+    Rule * rule = parseRule(rule_str);
+
+    rule->Probability(this->data);
+
+    long Target_p = rule->getTTPos();
+    char Target_s = rule->getTTSign();
+    int Target_v = rule->getTTValue();
+
+    rule_storage->Add(rule);
+}
+
+Rule * ScidiWrapper::parseRule(std::string rule_str) {
+    RuleLink * rule_link = RuleParser(*(this->data)).parseRuleLink(rule_str);
+    return rule_storage->ConvertFromLinkToRule(rule_link);
+}

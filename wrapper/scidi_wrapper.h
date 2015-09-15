@@ -44,22 +44,8 @@ private:
 
     std::vector<double> getCriteriaValues(bool need_yule = false);
 
-    void addRuleFromString(std::string rule_str) {
-        Rule * rule = parseRule(rule_str);
-
-        rule->Probability(this->data);
-
-        long Target_p = rule->getTTPos();
-        char Target_s = rule->getTTSign();
-        int Target_v = rule->getTTValue();
-
-        rule_storage->Add(rule);
-    }
-
-    Rule * parseRule(std::string rule_str) {
-        RuleLink * rule_link = RuleParser(*(this->data)).parseRuleLink(rule_str);
-        return rule_storage->ConvertFromLinkToRule(rule_link);
-    }
+    void addRuleFromString(std::string rule_str);
+    Rule * parseRule(std::string rule_str);
 
     void intitRuleStorage();
 };
