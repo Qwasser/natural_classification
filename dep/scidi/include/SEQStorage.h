@@ -33,6 +33,10 @@ public:
 	unsigned int getCodesCount(){ return CodeTable::Instance()->getCodesCount(); };
 	code_t getCode(input_t Token){ return CodeTable::Instance()->getCode(Token); };
 	input_t Decode(code_t Code){ return CodeTable::Instance()->Decode(Code); };
+    UINT GetPredicatePos(int Shift, int Sign, int SendToken)
+    {
+        return (2*Shift + ((1-Sign)/2))*this->getCodesCount() + SendToken;
+    }
 
 	int putSEQ(const char* SourceSeq);
 

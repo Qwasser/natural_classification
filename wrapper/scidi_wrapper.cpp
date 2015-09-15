@@ -42,6 +42,13 @@ std::vector<std::vector<std::string> > ScidiWrapper::getData() {
     return result;
 }
 
+void ScidiWrapper::intitRuleStorage() {
+    if (rule_storage) {
+        delete rule_storage;
+    }
+    this->rule_storage = new RulesStorage(data->getWidth(), data->getCodesCount());
+}
+
 void ScidiWrapper::makeRules(double conf_int_value, double yule_value, double min_cp, size_t depth) {
     current_rule_settings.SearchDepth = (int)depth;
     current_rule_settings.FisherSumBound = conf_int_value;
@@ -53,7 +60,7 @@ void ScidiWrapper::makeRules(double conf_int_value, double yule_value, double mi
     current_rule_settings.DeclineDecision = true;
     current_rule_settings.DeclinePremise = true;
 
-    this->rule_storage = new RulesStorage(data->getWidth(), data->getCodesCount());
+    intitRuleStorage();
     current_rule_settings.RulesContainer = this->rule_storage;
 
     NaiveRuleGenerator rule_generator = NaiveRuleGenerator();
