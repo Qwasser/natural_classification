@@ -301,6 +301,7 @@ class ScidiWrapper(_object):
     def getIdealObjects(self): return _scidi_wrapper.ScidiWrapper_getIdealObjects(self)
     def getFisher(self): return _scidi_wrapper.ScidiWrapper_getFisher(self)
     def getYule(self): return _scidi_wrapper.ScidiWrapper_getYule(self)
+    def setRulesFromStringVector(self, *args): return _scidi_wrapper.ScidiWrapper_setRulesFromStringVector(self, *args)
     def __init__(self): 
         this = _scidi_wrapper.new_ScidiWrapper()
         try: self.this.append(this)
