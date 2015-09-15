@@ -36,7 +36,8 @@ std::vector<std::vector<std::string> > ScidiWrapper::getData() {
         for (int j = 0; j < data->getWidth(); ++j) {
             int elem = 0;
             data->getElem_c(i, j, elem);
-            result[i][j] = std::string(data->Decode(elem));
+            const char * decoded_elem = data->Decode(elem);
+            result[i][j] = std::string(decoded_elem);
         }
     }
     return result;
@@ -87,7 +88,6 @@ std::vector<std::string> ScidiWrapper::getRules(){
     for (ruleID iter = rule_storage->begin(); iter != rule_storage->end(); ++iter) {
         rule_strings.push_back(iter->getChainStr());
     }
-    std::cout << rule_strings.size() << std::endl;
     return rule_strings;
 }
 
