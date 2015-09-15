@@ -54,10 +54,11 @@ void setDataTest() {
     std::vector<std::vector<std::string> > result_data = wrapper.getData();
     for (size_t i = 0; i < result_data.size(); ++i) {
         for (size_t j = 0; j < result_data[i].size(); ++j) {
-            std::cout << result_data[i][j] << " ";
+            assert(result_data[i][j] == test_data[i][j]);
         }
-        std::cout << std::endl;
     }
+
+    std::cout << "Data set test passed!" << std::endl;
 }
 
 void genRulesTest() {
@@ -65,11 +66,11 @@ void genRulesTest() {
     ScidiWrapper wrapper;
     wrapper.setData(test_data);
     wrapper.makeRules(0.25, 0.5, 0.7, 2);
-    std::cout << "Rules" << std::endl;
+
     std::vector<std::string> rules = wrapper.getRules();
-    for (auto rule : rules) {
-        std::cout << rule << std::endl;
-    }
+    assert(rules.size > 0);
+
+    std::cout << "Rule generation test passed!" << std::endl;
 }
 
 void genClassesTest() {
