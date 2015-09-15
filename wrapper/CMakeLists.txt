@@ -29,5 +29,5 @@ INCLUDE_DIRECTORIES(${wrapper_SOURCE_DIR})
 SET(CMAKE_SWIG_FLAGS "")
 
 SET_SOURCE_FILES_PROPERTIES(scidi_wrapper.i PROPERTIES CPLUSPLUS ON)
-SWIG_ADD_MODULE(scidi_wrapper python scidi_wrapper.i scidi_wrapper.cpp)
+SWIG_ADD_MODULE(scidi_wrapper python scidi_wrapper.i scidi_wrapper.cpp ruleparser.cpp)
 SWIG_LINK_LIBRARIES(scidi_wrapper scidi.a ${PYTHON_LIBRARIES} ${wxWidgets_LIBRARIES})
