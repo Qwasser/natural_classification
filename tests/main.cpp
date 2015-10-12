@@ -5,6 +5,8 @@
 
 #include "Sequence.h"
 
+#include <dep/sd/include/tst.h>
+
 #include <wrapper/scidi_wrapper.h>
 
 std::vector<std::vector<std::string> > makeTestInput() {
@@ -40,7 +42,6 @@ std::vector<std::vector<std::string> > makeTestInput() {
 
     return test_input;
 }
-
 
 void scidiLinkageTest() {
     Sequence test_sequence("test_sequence");
@@ -144,14 +145,64 @@ void ruleParseTest() {
     std::cout << "Rule parsing test passed!" << std::endl;
 }
 
+/* Sd hypotesys handler that simply prints rules */
+void manageReg (PHYPO hyp, PPRED const prs, QWORD hit, QWORD total)
+{
+    DWORD cusd = hyp->used_count;
+
+    for (size_t i = 0; i < cusd; ++i){
+        std::cout << prs[i].par_idx << ' : ' << prs[i].scale_val << ";" ;
+    }
+
+    std::cout << std::endl;
+    std::cout << "Last prob: " << hyp->last_prob << std::endl;
+    std::cout << "Hit: " << hit << std::endl;
+    std::cout << "Total: " << total << std::endl;
+}
+
+void generateDataForSd() {
+    /* Assume simple data table
+     * 0 0 1 1 2
+     * 1 0 1 0 1
+     * 0 0 0 0 0
+     * 0 0 0 0 0
+     * 1 0 1 0 1
+     * 0 0 1 1 2 */
+
+    /* Create attributes in amount of 5 */
+
+    size_t attributes_count = 5;
+    ATTR attributes [attributes_count];
+
+    char data [] = {0, 0, 1, 1, 2,
+                    1, 0, 1, 0, 1,
+                    0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0,
+                    1, 0, 1, 0, 1,
+                    0, 0, 1, 1, 2};
+
+    for (size_t i = 0; i < attributes_count; ++i) {
+        PATTR aptr = &attributes[i];
+        aptr->name = (char*) malloc(2);
+        aptr->name[1] = 0;
+        aptr->name[0] = i;
+
+        aptr->bordersz = sizeof(char);
+        aptr->objoffset = i * sizeof(char);
+
+        aptr->atype = 0;
+//        aptr->borders = ;
+    }
+}
+
 int main() {
-    scidiLinkageTest();
-    ruleParseTest();
+//    scidiLinkageTest();
+//    ruleParseTest();
 
-    setDataTest();
-    genRulesTest();
-    genClassesTest();
-
+//    setDataTest();
+//    genRulesTest();
+//    genClassesTest();
+    generateDataForSd();
     return 0;
 }
 
