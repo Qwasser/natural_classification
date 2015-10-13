@@ -124,8 +124,8 @@ void bust(PTR objs, QWORD numobj,
 
 void border_f(PTR attrs, DWORD attrc, PTR object, DWORD* buf);
 
-PSDEngine SDInitEngine(ATTR* atrs, DWORD atrc);
-void SDInitRawObjects(PSDEngine engine, PTR raw_objects, DWORD rawobj_sz, QWORD obj_cnt);
+extern "C" PSDEngine SDInitEngine(ATTR* atrs, DWORD atrc);
+extern "C" void SDInitRawObjects(PSDEngine engine, PTR raw_objects, DWORD rawobj_sz, QWORD obj_cnt);
 void SDInitIntegerObjects(PSDEngine engine, PTR integer_objects, DWORD initobj_sz, QWORD obj_cnt);
 PHYPO SDFormHypo(PSDEngine engine, DWORD conclusion, DWORD val, DWORD fulldepth, double fisher);
 PHYPO SDFormHypoWithYule(PSDEngine engine, DWORD conclusion, DWORD val, DWORD fulldepth, double fisher, DWORD yule_minfreq, double yule_critval);

@@ -5,7 +5,7 @@
 
 #include "Sequence.h"
 
-#include <dep/sd/include/tst.h>
+#include "tst.h"
 
 #include <wrapper/scidi_wrapper.h>
 
@@ -160,6 +160,22 @@ void manageReg (PHYPO hyp, PPRED const prs, QWORD hit, QWORD total)
     std::cout << "Total: " << total << std::endl;
 }
 
+BYTE cmp_char(PTR pl1, PTR pl2)
+{
+    char l1, l2;
+    BYTE res;
+
+    l1 = *((char*)pl1);
+    l2 = *((char*)pl2);
+
+    if (l1 > l2)
+        return 2;
+    else if (l1 < l2)
+        return 0;
+
+    return 1;
+}
+
 void generateDataForSd() {
     /* Assume simple data table
      * 0 0 1 1 2
@@ -172,6 +188,9 @@ void generateDataForSd() {
     /* Create attributes in amount of 5 */
 
     size_t attributes_count = 5;
+    size_t factor_count = 3;
+    size_t object_count = 5;
+
     ATTR attributes [attributes_count];
 
     char data [] = {0, 0, 1, 1, 2,
@@ -181,18 +200,29 @@ void generateDataForSd() {
                     1, 0, 1, 0, 1,
                     0, 0, 1, 1, 2};
 
+    char borders[factor_count] = {0, 1, 2};
+
     for (size_t i = 0; i < attributes_count; ++i) {
-        PATTR aptr = &attributes[i];
-        aptr->name = (char*) malloc(2);
-        aptr->name[1] = 0;
-        aptr->name[0] = i;
+        PATTR attr = &(attributes[i]);
+        attr->name = (char*) malloc(2);
+        attr->name[1] = 0;
+        attr->name[0] = i;
 
-        aptr->bordersz = sizeof(char);
-        aptr->objoffset = i * sizeof(char);
+        attr->bordersz = sizeof(char);
+        attr->objoffset = i * sizeof(char);
 
-        aptr->atype = 0;
-//        aptr->borders = ;
+        attr->atype = 0;
+        attr->borders = borders;
+        attr->bnum = factor_count;
+        attr->is_addrbased = 0;
+
+        attr->cmpf = &cmp_char;
+
+         *((DWORD*) attr->free_to_use) = 0xC0DE;
     }
+
+    PSDEngine engine = SDInitEngine(attributes, 5);
+    SDInitRawObjects(engine, data, attributes_count * sizeof(char), object_count);
 }
 
 int main() {
