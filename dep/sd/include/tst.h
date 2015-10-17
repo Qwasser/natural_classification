@@ -110,57 +110,57 @@ struct _SDEngine
 	DWORD* bitidx;
 };
 //-------------------------------------------------------------
-QWORD AdjustAttrOffsets(PTR attrs, DWORD anum);
-void AdjustBitIdxs(PTR attrs, DWORD anum, DWORD* indexes);
-void GetBinaryObjectDescriptor_s(void* objdescr, DWORD* objvalues, PTR attrs, DWORD anum);
-void genhypos(PTR hypos, PTR conclusions, DWORD conc_cnt, PTR attrs, DWORD anum, DWORD fulldepth);
-void genhypos_reverse(PTR hypos, PTR conclusions, DWORD conc_cnt, PTR attrs, DWORD anum, DWORD fulldepth);
-void bust(PTR objs, QWORD numobj, 
-	PTR atrs, DWORD anum, 
-	PTR hyp,
-	DWORD* bits, 
-	QWORD* pars_nc, QWORD* pars_c, 
-	PTR reg_cbck);
+extern "C" QWORD AdjustAttrOffsets(PTR attrs, DWORD anum);
+extern "C" void AdjustBitIdxs(PTR attrs, DWORD anum, DWORD* indexes);
+extern "C" void GetBinaryObjectDescriptor_s(void* objdescr, DWORD* objvalues, PTR attrs, DWORD anum);
+extern "C" void genhypos(PTR hypos, PTR conclusions, DWORD conc_cnt, PTR attrs, DWORD anum, DWORD fulldepth);
+extern "C" void genhypos_reverse(PTR hypos, PTR conclusions, DWORD conc_cnt, PTR attrs, DWORD anum, DWORD fulldepth);
+extern "C" void bust(PTR objs, QWORD numobj,
+                    PTR atrs, DWORD anum,
+                    PTR hyp,
+                    DWORD* bits,
+                    QWORD* pars_nc, QWORD* pars_c,
+                    PTR reg_cbck);
 
-void border_f(PTR attrs, DWORD attrc, PTR object, DWORD* buf);
+extern "C" void border_f(PTR attrs, DWORD attrc, PTR object, DWORD* buf);
 
 extern "C" PSDEngine SDInitEngine(ATTR* atrs, DWORD atrc);
 extern "C" void SDInitRawObjects(PSDEngine engine, PTR raw_objects, DWORD rawobj_sz, QWORD obj_cnt);
-void SDInitIntegerObjects(PSDEngine engine, PTR integer_objects, DWORD initobj_sz, QWORD obj_cnt);
-PHYPO SDFormHypo(PSDEngine engine, DWORD conclusion, DWORD val, DWORD fulldepth, double fisher);
-PHYPO SDFormHypoWithYule(PSDEngine engine, DWORD conclusion, DWORD val, DWORD fulldepth, double fisher, DWORD yule_minfreq, double yule_critval);
-void SDBust(PSDEngine engine, PHYPO hyp, RegHandle reg_here);
-void SDMakeScale(DWORD grad_num, ATTR* atrs, PTR objects, DWORD object_sz, QWORD obj_cnt);
-void SDMakeScales(DWORD grad_num, ATTR* atrs, DWORD atr_num, PTR objects, DWORD object_sz, QWORD obj_cnt);
-void SDMakeDiffGradScales(ATTR* atrs, DWORD atr_num, PTR objects, DWORD object_sz, QWORD obj_cnt);
-PATTR SDInitAttrs(DWORD atrc);
-void SDCloseEngine(PSDEngine engine);
-void SDCloseHypo(PHYPO hyp);
-void SDCloseHypos(PHYPO hyp, QWORD hcnt);
-PHYPO SDPenetratedOneD(PSDEngine engine, PPRED conclusions, DWORD conc_cnt, DWORD full_depth, double fisher, DWORD* hyp_cnt);
-PHYPO SDPenetratedYuleOneD(PSDEngine engine, PPRED conclusions, DWORD conc_cnt, DWORD full_depth, double fisher, DWORD* hyp_cnt, DWORD yule_freq, double yule_critlvl);
-PHYPO SDBackwardHypos(PSDEngine engine, PPRED conclusions, DWORD conc_cnt, DWORD target_par, DWORD full_depth, double fisher, DWORD* hyp_cnt, DWORD yule_freq, double yule_critlvl);
+extern "C" void SDInitIntegerObjects(PSDEngine engine, PTR integer_objects, DWORD initobj_sz, QWORD obj_cnt);
+extern "C" PHYPO SDFormHypo(PSDEngine engine, DWORD conclusion, DWORD val, DWORD fulldepth, double fisher);
+extern "C" PHYPO SDFormHypoWithYule(PSDEngine engine, DWORD conclusion, DWORD val, DWORD fulldepth, double fisher, DWORD yule_minfreq, double yule_critval);
+extern "C" void SDBust(PSDEngine engine, PHYPO hyp, RegHandle reg_here);
+extern "C" void SDMakeScale(DWORD grad_num, ATTR* atrs, PTR objects, DWORD object_sz, QWORD obj_cnt);
+extern "C" void SDMakeScales(DWORD grad_num, ATTR* atrs, DWORD atr_num, PTR objects, DWORD object_sz, QWORD obj_cnt);
+extern "C" void SDMakeDiffGradScales(ATTR* atrs, DWORD atr_num, PTR objects, DWORD object_sz, QWORD obj_cnt);
+extern "C" PATTR SDInitAttrs(DWORD atrc);
+extern "C" void SDCloseEngine(PSDEngine engine);
+extern "C" void SDCloseHypo(PHYPO hyp);
+extern "C" void SDCloseHypos(PHYPO hyp, QWORD hcnt);
+extern "C" PHYPO SDPenetratedOneD(PSDEngine engine, PPRED conclusions, DWORD conc_cnt, DWORD full_depth, double fisher, DWORD* hyp_cnt);
+extern "C" PHYPO SDPenetratedYuleOneD(PSDEngine engine, PPRED conclusions, DWORD conc_cnt, DWORD full_depth, double fisher, DWORD* hyp_cnt, DWORD yule_freq, double yule_critlvl);
+extern "C" PHYPO SDBackwardHypos(PSDEngine engine, PPRED conclusions, DWORD conc_cnt, DWORD target_par, DWORD full_depth, double fisher, DWORD* hyp_cnt, DWORD yule_freq, double yule_critlvl);
 //-------------------------------------------------------------
-void SDSaveAttr(PATTR atr, PTR fout);
-void SDLoadAttr(PATTR atr, PTR fin);
-void SDSaveEngine(PSDEngine engine, PTR fout);
-PSDEngine SDLoadEngine(PTR fin);
+extern "C" void SDSaveAttr(PATTR atr, PTR fout);
+extern "C" void SDLoadAttr(PATTR atr, PTR fin);
+extern "C" void SDSaveEngine(PSDEngine engine, PTR fout);
+extern "C" PSDEngine SDLoadEngine(PTR fin);
 //-------------------------------------------------------------
-double scale_int(void* o);
-double scale_dword(void* o);
-double scale_short(void* o);
-double scale_lagre(void* o);
-double scale_char(void* o);
-double scale_double(void* o);
-double scale_bool(void* o);
+extern "C" double scale_int(void* o);
+extern "C" double scale_dword(void* o);
+extern "C" double scale_short(void* o);
+extern "C" double scale_lagre(void* o);
+extern "C" double scale_char(void* o);
+extern "C" double scale_double(void* o);
+extern "C" double scale_bool(void* o);
 
-BYTE cmp_double(PTR pd1, PTR pd2);
-BYTE cmp_long(PTR pl1, PTR pl2);
-BYTE cmp_str(PTR ps1, PTR ps2);
-BYTE cmp_int(PTR pi1, PTR pi2);
-BYTE cmp_short(PTR ps1, PTR ps2);
-BYTE cmp_large(PTR pl1, PTR pl2);
-BYTE cmp_char(PTR pc1, PTR pc2);
-BYTE cmp_bool(PTR pb1, PTR pb2);
+extern "C" BYTE cmp_double(PTR pd1, PTR pd2);
+extern "C" BYTE cmp_long(PTR pl1, PTR pl2);
+extern "C" BYTE cmp_str(PTR ps1, PTR ps2);
+extern "C" BYTE cmp_int(PTR pi1, PTR pi2);
+extern "C" BYTE cmp_short(PTR ps1, PTR ps2);
+extern "C" BYTE cmp_large(PTR pl1, PTR pl2);
+extern "C" BYTE cmp_char(PTR pc1, PTR pc2);
+extern "C" BYTE cmp_bool(PTR pb1, PTR pb2);
 //-------------------------------------------------------------
 #endif

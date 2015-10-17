@@ -5,7 +5,7 @@
 
 #include "Sequence.h"
 
-#include "tst.h"
+#include <dep/sd/include/tst.h>
 
 #include <wrapper/scidi_wrapper.h>
 
@@ -146,34 +146,18 @@ void ruleParseTest() {
 }
 
 /* Sd hypotesys handler that simply prints rules */
-void manageReg (PHYPO hyp, PPRED const prs, QWORD hit, QWORD total)
+void manageReg (PHYPO hyp, PPRED const prs, DWORD hit, DWORD total)
 {
     DWORD cusd = hyp->used_count;
 
-    for (size_t i = 0; i < cusd; ++i){
-        std::cout << prs[i].par_idx << ' : ' << prs[i].scale_val << ";" ;
+    for (size_t i = 0; i < cusd - 1; ++i){
+        std::cout << prs[i].par_idx << " : " << prs[i].scale_val << "; " ;
     }
 
     std::cout << std::endl;
     std::cout << "Last prob: " << hyp->last_prob << std::endl;
     std::cout << "Hit: " << hit << std::endl;
     std::cout << "Total: " << total << std::endl;
-}
-
-BYTE cmp_char(PTR pl1, PTR pl2)
-{
-    char l1, l2;
-    BYTE res;
-
-    l1 = *((char*)pl1);
-    l2 = *((char*)pl2);
-
-    if (l1 > l2)
-        return 2;
-    else if (l1 < l2)
-        return 0;
-
-    return 1;
 }
 
 void generateDataForSd() {
@@ -188,7 +172,7 @@ void generateDataForSd() {
     /* Create attributes in amount of 5 */
 
     size_t attributes_count = 5;
-    size_t factor_count = 3;
+    size_t factor_count = 2;
     size_t object_count = 5;
 
     ATTR attributes [attributes_count];
@@ -200,13 +184,12 @@ void generateDataForSd() {
                     1, 0, 1, 0, 1,
                     0, 0, 1, 1, 2};
 
-    char borders[factor_count] = {0, 1, 2};
+    char borders[factor_count + 1] = {0, 1, 2};
 
     for (size_t i = 0; i < attributes_count; ++i) {
         PATTR attr = &(attributes[i]);
-        attr->name = (char*) malloc(2);
-        attr->name[1] = 0;
-        attr->name[0] = i;
+        attr->name = (char*) malloc(6);
+        attr->name = "test";
 
         attr->bordersz = sizeof(char);
         attr->objoffset = i * sizeof(char);
@@ -221,17 +204,44 @@ void generateDataForSd() {
          *((DWORD*) attr->free_to_use) = 0xC0DE;
     }
 
-    PSDEngine engine = SDInitEngine(attributes, 5);
+    PSDEngine engine = SDInitEngine(attributes, attributes_count);
     SDInitRawObjects(engine, data, attributes_count * sizeof(char), object_count);
+
+    PPRED concls = (PPRED) malloc(attributes_count * (factor_count + 1) * sizeof(PRED));
+
+    for (size_t i = 0; i < attributes_count; ++i) {
+        for (size_t j = 0; j <= factor_count; ++j) {
+            concls[j + i * (factor_count + 1)].scale_val = j;
+            concls[j + i * (factor_count + 1)].par_idx = i;
+        }
+    }
+
+    unsigned int hypcnt = 0;
+
+    PHYPO hypos = SDPenetratedYuleOneD(engine,
+                                     concls,
+                                     attributes_count * (factor_count + 1),
+                                     3,
+                                     0.6,
+                                     &hypcnt,
+                                     2,
+                                     0.7);
+
+    std::cout << "hyppocount " << hypcnt << std::endl;
+
+    for (size_t i = 0; i < hypcnt; ++i) {
+        SDBust(engine, hypos + i, &manageReg);
+    }
+
 }
 
 int main() {
-//    scidiLinkageTest();
-//    ruleParseTest();
+    scidiLinkageTest();
+    ruleParseTest();
 
-//    setDataTest();
-//    genRulesTest();
-//    genClassesTest();
+    setDataTest();
+    genRulesTest();
+    genClassesTest();
     generateDataForSd();
     return 0;
 }
