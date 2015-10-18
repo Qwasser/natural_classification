@@ -32,9 +32,9 @@ public:
         }
         rule_storage->MakePointersArray();
     }
-
-private:
     SEQStorage * data = NULL;
+private:
+
 
     RulesStorage * rule_storage = NULL;
     RuleSettings current_rule_settings;

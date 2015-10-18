@@ -8,6 +8,7 @@
 #include <dep/sd/include/tst.h>
 
 #include <wrapper/scidi_wrapper.h>
+#include <wrapper/sdrulegenerator.h>
 
 std::vector<std::vector<std::string> > makeTestInput() {
     std::vector<std::vector<std::string> > test_input;
@@ -232,17 +233,26 @@ void generateDataForSd() {
     for (size_t i = 0; i < hypcnt; ++i) {
         SDBust(engine, hypos + i, &manageReg);
     }
+}
 
+void testSdGenerator() {
+    std::vector<std::vector<std::string> > test_data = makeTestInput();
+    ScidiWrapper wrapper;
+    wrapper.setData(test_data);
+    SdRuleGenerator gen(*(wrapper.data));
+    gen.generateAllRules(3, 0.6, 2, 0.7);
 }
 
 int main() {
-    scidiLinkageTest();
-    ruleParseTest();
+//    scidiLinkageTest();
+//    ruleParseTest();
 
-    setDataTest();
-    genRulesTest();
-    genClassesTest();
-    generateDataForSd();
+//    setDataTest();
+//    genRulesTest();
+//    genClassesTest();
+//    generateDataForSd();
+
+    testSdGenerator();
     return 0;
 }
 

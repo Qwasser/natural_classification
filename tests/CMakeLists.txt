@@ -4,7 +4,8 @@ PROJECT( tests )
 
 include_directories(${scidi_wrapper_SOURCE_DIR}
                     ${scidi_wrapper_SOURCE_DIR}/wrapper
-                    ${scidi_wrapper_SOURCE_DIR}/dep/scidi/include)
+                    ${scidi_wrapper_SOURCE_DIR}/dep/scidi/include
+                    ${scidi_wrapper_SOURCE_DIR}/dep/sd/include)
 
 file(GLOB_RECURSE SRC_LIST "*.h" "*.hpp" "*.cpp")
 file(GLOB_RECURSE HEADER_FILES "${CMAKE_SOURCE_DIR}/dep/scidi/include/*.h")
