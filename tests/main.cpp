@@ -44,6 +44,7 @@ std::vector<std::vector<std::string> > makeTestInput() {
     return test_input;
 }
 
+
 void scidiLinkageTest() {
     Sequence test_sequence("test_sequence");
 }
@@ -57,7 +58,7 @@ void setDataTest() {
     for (size_t i = 0; i < result_data.size(); ++i) {
         for (size_t j = 0; j < result_data[i].size(); ++j) {
             assert(result_data[i][j] == test_data[i][j]);
-        }
+        } 
     }
 
     std::cout << "Data set test passed!" << std::endl;
