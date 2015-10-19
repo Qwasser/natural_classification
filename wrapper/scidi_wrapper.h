@@ -25,6 +25,11 @@ public:
     std::vector<double> getFisher();
     std::vector<double> getYule();
 
+    void makeRulesWithSDGenerator(unsigned int full_depth,
+                                  double fisher,
+                                  unsigned int yule_freq,
+                                  double yule_critlvl);
+
     void setRulesFromStringVector(std::vector<std::string> rule_strings) {
         intitRuleStorage();
         for (auto str : rule_strings) {
@@ -32,9 +37,10 @@ public:
         }
         rule_storage->MakePointersArray();
     }
-    SEQStorage * data = NULL;
+
 
 private:
+    SEQStorage * data = NULL;
     RulesStorage * rule_storage = NULL;
     RuleSettings current_rule_settings;
 

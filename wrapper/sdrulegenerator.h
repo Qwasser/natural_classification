@@ -60,7 +60,6 @@ private:
         for (size_t i = 0; i < cusd - 1; ++i){
             RuleSection p;
             p.Shift = prs[i].par_idx;
-            std::cout << prs[i].par_idx << std::endl;
             p.Value = prs[i].scale_val;
             p.Sign = 1;
 
@@ -71,8 +70,6 @@ private:
         target.Shift = hyp->conc_idx;
         target.Value = hyp->conc_val;
         target.Sign = 1;
-
-        std::cout << target.Shift << " " << target.Sign << " " << target.Value << std::endl;
 
         predicates.push_back(target);
 
@@ -93,7 +90,7 @@ private:
         rule_link->setChain(chain);
         rule_link->setTarget(t);
 
-        std::cout << rule_link->getChainStr();
+        gen->rules.push_back(rule_link);
     }
 };
 #endif // SDRULEGENERATOR_H

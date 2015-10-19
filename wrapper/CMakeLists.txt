@@ -18,9 +18,8 @@ find_package(wxWidgets COMPONENTS core base xml REQUIRED)
 set(wxWidgets_CONFIG_OPTIONS SHARED=1)
 include(${wxWidgets_USE_FILE})
 
-LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/dep/sd/lib
-                 ${CMAKE_SOURCE_DIR}/dep/scidi/lib
-                 )
+LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/dep/scidi/lib
+                 ${CMAKE_SOURCE_DIR}/dep/sd/lib)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADER_FILES})
 target_link_libraries(${PROJECT_NAME} scidi.a libdiscovery.a ${wxWidgets_LIBRARIES})

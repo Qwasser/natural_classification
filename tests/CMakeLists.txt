@@ -16,4 +16,4 @@ LINK_DIRECTORIES(${scidi_wrapper_SOURCE_DIR}/dep/sd/lib)
 
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${HEADER_FILES})
 
-target_link_libraries(${PROJECT_NAME} scidi.a libdiscovery.a wrapper)
+target_link_libraries(${PROJECT_NAME} wrapper)

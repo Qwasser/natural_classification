@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <list>
 #include <iostream>
 #include <numeric>
 
@@ -15,6 +16,7 @@
 #include "Callback.h"
 
 #include "scidi_wrapper.h"
+#include "sdrulegenerator.h"
 
 void ScidiWrapper::setData(const std::vector<std::vector<std::string> > & input_data) {
     Sequence * storage = new Sequence [input_data.size()];
@@ -197,15 +199,28 @@ void ScidiWrapper::addRuleFromString(std::string rule_str) {
     Rule * rule = parseRule(rule_str);
 
     rule->Probability(this->data);
-
-    long Target_p = rule->getTTPos();
-    char Target_s = rule->getTTSign();
-    int Target_v = rule->getTTValue();
-
     rule_storage->Add(rule);
 }
 
 Rule * ScidiWrapper::parseRule(std::string rule_str) {
     RuleLink * rule_link = RuleParser(*(this->data)).parseRuleLink(rule_str);
     return rule_storage->ConvertFromLinkToRule(rule_link);
+}
+
+void ScidiWrapper::makeRulesWithSDGenerator(unsigned int full_depth,
+                                            double fisher,
+                                            unsigned int yule_freq,
+                                            double yule_critlvl) {
+    SdRuleGenerator gen(*(data));
+    std::list<RuleLink *> rule_links = gen.generateAllRules(full_depth,
+                                                              fisher,
+                                                              yule_freq,
+                                                              yule_critlvl);
+    intitRuleStorage();
+    for (RuleLink * link_ptr : rule_links) {
+        Rule * rule = rule_storage->ConvertFromLinkToRule(link_ptr);
+        rule->Probability(data);
+        rule_storage->Add(rule);
+    }
+    rule_storage->MakePointersArray();
 }

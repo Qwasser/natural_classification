@@ -3,9 +3,7 @@
 #include <string>
 #include <iostream>
 
-#include "Sequence.h"
-
-#include <dep/sd/include/tst.h>
+//#include <dep/sd/include/tst.h>
 
 #include <wrapper/scidi_wrapper.h>
 #include <wrapper/sdrulegenerator.h>
@@ -147,113 +145,112 @@ void ruleParseTest() {
     std::cout << "Rule parsing test passed!" << std::endl;
 }
 
-/* Sd hypotesys handler that simply prints rules */
-void manageReg (PHYPO hyp, PPRED const prs, DWORD hit, DWORD total)
-{
-    DWORD cusd = hyp->used_count;
+///* Sd hypotesys handler that simply prints rules */
+//void manageReg (PHYPO hyp, PPRED const prs, DWORD hit, DWORD total)
+//{
+//    DWORD cusd = hyp->used_count;
 
-    for (size_t i = 0; i < cusd - 1; ++i){
-        std::cout << prs[i].par_idx << " : " << prs[i].scale_val << "; " ;
-    }
+//    for (size_t i = 0; i < cusd - 1; ++i){
+//        std::cout << prs[i].par_idx << " : " << prs[i].scale_val << "; " ;
+//    }
 
-    std::cout << std::endl;
-    std::cout << "Last prob: " << hyp->last_prob << std::endl;
-    std::cout << "Hit: " << hit << std::endl;
-    std::cout << "Total: " << total << std::endl;
-}
+//    std::cout << std::endl;
+//    std::cout << "Last prob: " << hyp->last_prob << std::endl;
+//    std::cout << "Hit: " << hit << std::endl;
+//    std::cout << "Total: " << total << std::endl;
+//}
 
-void generateDataForSd() {
-    /* Assume simple data table
-     * 0 0 1 1 2
-     * 1 0 1 0 1
-     * 0 0 0 0 0
-     * 0 0 0 0 0
-     * 1 0 1 0 1
-     * 0 0 1 1 2 */
+//void generateDataForSd() {
+//    /* Assume simple data table
+//     * 0 0 1 1 2
+//     * 1 0 1 0 1
+//     * 0 0 0 0 0
+//     * 0 0 0 0 0
+//     * 1 0 1 0 1
+//     * 0 0 1 1 2 */
 
-    /* Create attributes in amount of 5 */
+//    /* Create attributes in amount of 5 */
 
-    size_t attributes_count = 5;
-    size_t factor_count = 2;
-    size_t object_count = 5;
+//    size_t attributes_count = 5;
+//    size_t factor_count = 2;
+//    size_t object_count = 5;
 
-    ATTR attributes [attributes_count];
+//    ATTR attributes [attributes_count];
 
-    char data [] = {0, 0, 1, 1, 2,
-                    1, 0, 1, 0, 1,
-                    0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0,
-                    1, 0, 1, 0, 1,
-                    0, 0, 1, 1, 2};
+//    char data [] = {0, 0, 1, 1, 2,
+//                    1, 0, 1, 0, 1,
+//                    0, 0, 0, 0, 0,
+//                    0, 0, 0, 0, 0,
+//                    1, 0, 1, 0, 1,
+//                    0, 0, 1, 1, 2};
 
-    char borders[factor_count + 1] = {0, 1, 2};
+//    char borders[factor_count + 1] = {0, 1, 2};
 
-    for (size_t i = 0; i < attributes_count; ++i) {
-        PATTR attr = &(attributes[i]);
-        attr->name = (char*) malloc(6);
-        attr->name = "test";
+//    for (size_t i = 0; i < attributes_count; ++i) {
+//        PATTR attr = &(attributes[i]);
+//        attr->name = (char*) malloc(6);
+//        attr->name = "test";
 
-        attr->bordersz = sizeof(char);
-        attr->objoffset = i * sizeof(char);
+//        attr->bordersz = sizeof(char);
+//        attr->objoffset = i * sizeof(char);
 
-        attr->atype = 0;
-        attr->borders = borders;
-        attr->bnum = factor_count;
-        attr->is_addrbased = 0;
+//        attr->atype = 0;
+//        attr->borders = borders;
+//        attr->bnum = factor_count;
+//        attr->is_addrbased = 0;
 
-        attr->cmpf = &cmp_char;
+//        attr->cmpf = &cmp_char;
 
-         *((DWORD*) attr->free_to_use) = 0xC0DE;
-    }
+//         *((DWORD*) attr->free_to_use) = 0xC0DE;
+//    }
 
-    PSDEngine engine = SDInitEngine(attributes, attributes_count);
-    SDInitRawObjects(engine, data, attributes_count * sizeof(char), object_count);
+//    PSDEngine engine = SDInitEngine(attributes, attributes_count);
+//    SDInitRawObjects(engine, data, attributes_count * sizeof(char), object_count);
 
-    PPRED concls = (PPRED) malloc(attributes_count * (factor_count + 1) * sizeof(PRED));
+//    PPRED concls = (PPRED) malloc(attributes_count * (factor_count + 1) * sizeof(PRED));
 
-    for (size_t i = 0; i < attributes_count; ++i) {
-        for (size_t j = 0; j <= factor_count; ++j) {
-            concls[j + i * (factor_count + 1)].scale_val = j;
-            concls[j + i * (factor_count + 1)].par_idx = i;
-        }
-    }
+//    for (size_t i = 0; i < attributes_count; ++i) {
+//        for (size_t j = 0; j <= factor_count; ++j) {
+//            concls[j + i * (factor_count + 1)].scale_val = j;
+//            concls[j + i * (factor_count + 1)].par_idx = i;
+//        }
+//    }
 
-    unsigned int hypcnt = 0;
+//    unsigned int hypcnt = 0;
 
-    PHYPO hypos = SDPenetratedYuleOneD(engine,
-                                     concls,
-                                     attributes_count * (factor_count + 1),
-                                     3,
-                                     0.6,
-                                     &hypcnt,
-                                     2,
-                                     0.7);
+//    PHYPO hypos = SDPenetratedYuleOneD(engine,
+//                                     concls,
+//                                     attributes_count * (factor_count + 1),
+//                                     3,
+//                                     0.6,
+//                                     &hypcnt,
+//                                     2,
+//                                     0.7);
 
-    std::cout << "hyppocount " << hypcnt << std::endl;
+//    std::cout << "hyppocount " << hypcnt << std::endl;
 
-    for (size_t i = 0; i < hypcnt; ++i) {
-        SDBust(engine, hypos + i, &manageReg);
-    }
-}
+//    for (size_t i = 0; i < hypcnt; ++i) {
+//        SDBust(engine, hypos + i, &manageReg);
+//    }
+//}
 
-void testSdGenerator() {
-    std::vector<std::vector<std::string> > test_data = makeTestInput();
-    ScidiWrapper wrapper;
-    wrapper.setData(test_data);
-    SdRuleGenerator gen(*(wrapper.data));
-    gen.generateAllRules(2, 0.9, 2, 0.1);
-}
+//void testSdGenerator() {
+//    std::vector<std::vector<std::string> > test_data = makeTestInput();
+//    ScidiWrapper wrapper;
+//    wrapper.setData(test_data);
+//    wrapper.makeRulesWithSDGenerator(2, 0.5, 1, 0.5);
+//}
 
 int main() {
 //    scidiLinkageTest();
 //    ruleParseTest();
 
 //    setDataTest();
-//    genRulesTest();
+    genRulesTest();
 //    genClassesTest();
 //    generateDataForSd();
 
-    testSdGenerator();
+//    testSdGenerator();
     return 0;
 }
 
