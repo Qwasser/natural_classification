@@ -67,7 +67,7 @@ private:
         }
 
         Predicate target;
-        target.Shift = hyp->conc_idx;
+        target.Shift = hyp->conc_par;
         target.Value = hyp->conc_val;
         target.Sign = 1;
 

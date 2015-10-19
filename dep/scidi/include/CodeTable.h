@@ -13,9 +13,9 @@ typedef unsigned int UINT;
 class RuleSection
 {
 public:
-	UINT Shift;
-	char Sign;	
-	int Value;	
+	UINT Shift;	// Смещение признака относительно целевого
+	char Sign;	// Знак отклонения частоты встречаемости Y
+	int Value;	// Значение признака (A=1,T=2,G=3,C=4)
 
 	bool operator== (RuleSection y)
 	{
@@ -45,13 +45,14 @@ typedef Predicate* PredicateArray;
 class TargetSection
 {
 public:
-	UINT Shift;
-	int Value;
+	UINT Shift;	// Смещение признака относительно целевого
+	int Value;	// Значение признака (A=1,T=2,G=3,C=4)
+
 	bool operator== (TargetSection y)
 	{
 		if (this->Shift == y.Shift &&
 			this->Value == y.Value)
-            return true;
+			return true;
 		else
 			return false;
 	};
@@ -74,9 +75,8 @@ protected:
 public:
 	static CodeTable* Instance();
 	
-    PredicateArray InitPredicates(unsigned long n, unsigned long alf = 0);
-
-    static Predicate& GetPredicate(UINT id) { return ppred[id]; }
+	PredicateArray InitPredicates(unsigned long n, unsigned long alf = 0);
+	static Predicate& GetPredicate(UINT id) { return ppred[id]; };
 
 	void Parse(input_t* SeqsArray, long SeqsArraySize);
 	void Parse(std::vector<input_t> SeqsArray);
@@ -93,7 +93,7 @@ private:
 	code_t Code(input_t CurrChar);
 
 	static PredicateArray ppred;
-    static std::vector<std::string> Tokens;
+	static std::vector<input_t> Tokens;
 	static std::vector<code_t> Codes;
 	static unsigned int CodesCount;
 	short EmptiesCount;
