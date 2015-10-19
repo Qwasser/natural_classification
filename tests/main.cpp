@@ -241,7 +241,7 @@ void testSdGenerator() {
     ScidiWrapper wrapper;
     wrapper.setData(test_data);
     SdRuleGenerator gen(*(wrapper.data));
-    gen.generateAllRules(3, 0.6, 2, 0.7);
+    gen.generateAllRules(2, 0.9, 2, 0.1);
 }
 
 int main() {

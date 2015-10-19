@@ -23,7 +23,7 @@ private:
     unsigned int hypotesys_count = 0;
     PHYPO hypotesys = nullptr;
 
-    std::list<Rule *> rules;
+    std::list<RuleLink *> rules;
 
 public:
     SdRuleGenerator(SEQStorage & storage) : storage(storage) {
@@ -31,16 +31,11 @@ public:
         object_count = storage.getLength();
     }
 
-    std::list<Rule *> generateAllRules(DWORD full_depth, double fisher, DWORD yule_freq, double yule_critlvl) {
-
+    std::list<RuleLink *> generateAllRules(DWORD full_depth, double fisher, DWORD yule_freq, double yule_critlvl) {
         buildAttributes();
-        std::cout << "attrs built" << std::endl;
         buildDataArray();
-        std::cout << "attrray built" << std::endl;
         initEngine();
-        std::cout << "engine done" << std::endl;
         buildAllHypos(full_depth, fisher, yule_freq, yule_critlvl);
-        std::cout << "hypotesys done" << std::endl;
 
         for (size_t i = 0; i < hypotesys_count; ++i) {
             SDBust(engine, hypotesys + i, &parseReg);
@@ -58,18 +53,47 @@ private:
     static void parseReg(PHYPO hyp, PPRED const prs, DWORD hit, DWORD total)
     {
         DWORD cusd = hyp->used_count;
+        SdRuleGenerator * gen = static_cast<SdRuleGenerator*>(hyp->thread_arg);
+
+        std::vector<Predicate> predicates;
 
         for (size_t i = 0; i < cusd - 1; ++i){
-            std::cout << prs[i].par_idx << " : " << prs[i].scale_val << "; " ;
+            RuleSection p;
+            p.Shift = prs[i].par_idx;
+            std::cout << prs[i].par_idx << std::endl;
+            p.Value = prs[i].scale_val;
+            p.Sign = 1;
+
+            predicates.push_back(p);
         }
 
-        std::cout << std::endl;
-        std::cout << "Last prob: " << hyp->last_prob << std::endl;
-        std::cout << "Hit: " << hit << std::endl;
-        std::cout << "Total: " << total << std::endl;
+        Predicate target;
+        target.Shift = hyp->conc_idx;
+        target.Value = hyp->conc_val;
+        target.Sign = 1;
+
+        std::cout << target.Shift << " " << target.Sign << " " << target.Value << std::endl;
+
+        predicates.push_back(target);
+
+        RuleSection * t = new RuleSection(predicates.back());
+        UINT * chain = new UINT[predicates.size() + 2];
+
+        chain[0] = predicates.size() - 1;
+        chain[1] = 0;
+        chain[2] = 0;
+
+        for (size_t i = 0; i < predicates.size() - 1; ++i) {
+            chain[i + 3] = gen->storage.GetPredicatePos(predicates[i].Shift,
+                                                        predicates[i].Sign,
+                                                        predicates[i].Value);
+        }
+
+        RuleLink * rule_link = new RuleLink();
+        rule_link->setChain(chain);
+        rule_link->setTarget(t);
+
+        std::cout << rule_link->getChainStr();
     }
 };
-
-
-
 #endif // SDRULEGENERATOR_H

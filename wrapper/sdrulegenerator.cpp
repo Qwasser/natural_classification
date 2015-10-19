@@ -41,7 +41,7 @@ void SdRuleGenerator::buildDataArray() {
     for (size_t attr_num = 0; attr_num < attributes_count; ++attr_num) {
         for (size_t obj_num = 0; obj_num < object_count; ++obj_num) {
             int element_code = 0;
-//            storage.getElem_c(obj_num, attr_num, element_code);
+            storage.getElem_c(obj_num, attr_num, element_code);
             data[obj_num * attributes_count + attr_num] = element_code;
         }
     }
@@ -71,4 +71,10 @@ void SdRuleGenerator::buildAllHypos(DWORD full_depth, double fisher, DWORD yule_
                                      &hypotesys_count,
                                      yule_freq,
                                      yule_critlvl);
+
+    // Assign pointer to generator in all hypotesys to access generator in hypotesys found callback
+    for (size_t i = 0; i < hypotesys_count; ++i) {
+        hypotesys[i].thread_arg = this;
+    }
+
 }
