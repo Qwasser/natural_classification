@@ -60,7 +60,8 @@ private:
         for (size_t i = 0; i < cusd - 1; ++i){
             RuleSection p;
             p.Shift = prs[i].par_idx;
-            p.Value = prs[i].scale_val;
+            int * borders = (int *)gen->attributes[p.Shift].borders;
+            p.Value = borders[prs[i].scale_val];
             p.Sign = 1;
 
             predicates.push_back(p);
@@ -68,7 +69,9 @@ private:
 
         Predicate target;
         target.Shift = hyp->conc_par;
-        target.Value = hyp->conc_val;
+
+        int * borders = (int *)gen->attributes[target.Shift].borders;
+        target.Value = borders[hyp->conc_val];
         target.Sign = 1;
 
         predicates.push_back(target);

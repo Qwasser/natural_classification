@@ -4,18 +4,30 @@
 #include <dep/sd/include/tst.h>
 
 #include <iostream>
+#include <unordered_set>
 
 void SdRuleGenerator::buildAttributes() {
-    int code_count = storage.getCodesCount();
-    int * levels = new int[code_count];
-
-    for (int i = 0; i < code_count; ++i) {
-        levels[i] = i;
-    }
+    std::unordered_set<int> levels_set;
 
     this->attributes = new ATTR [attributes_count];
 
     for (size_t i = 0; i < attributes_count; ++i) {
+        levels_set.clear();
+        for (size_t obj_num = 0; obj_num < storage.getLength(); ++obj_num) {
+            int elem_code = 0;
+            storage.getElem_c(obj_num, i, elem_code);
+            levels_set.insert(elem_code);
+        }
+
+        size_t level_count = levels_set.size();
+        int * levels = new int [level_count];
+
+        size_t current_level = 0;
+        for (int level_code : levels_set) {
+            levels[current_level] = level_code;
+            ++current_level;
+        }
+
         PATTR attr = &(attributes[i]);
 
         attr->name = (char*) malloc(6);
@@ -26,7 +38,7 @@ void SdRuleGenerator::buildAttributes() {
 
         attr->atype = 0;
         attr->borders = levels;
-        attr->bnum = code_count - 1;
+        attr->bnum = level_count - 1;
         attr->is_addrbased = 0;
 
         attr->cmpf = &cmp_int;
@@ -37,7 +49,6 @@ void SdRuleGenerator::buildAttributes() {
 
 void SdRuleGenerator::buildDataArray() {
     this->data = new int [this->attributes_count * this->object_count];
-
     for (size_t attr_num = 0; attr_num < attributes_count; ++attr_num) {
         for (size_t obj_num = 0; obj_num < object_count; ++obj_num) {
             int element_code = 0;
@@ -53,19 +64,26 @@ void SdRuleGenerator::initEngine() {
 }
 
 void SdRuleGenerator::buildAllHypos(DWORD full_depth, double fisher, DWORD yule_freq, double yule_critlvl) {
-    PPRED concls = (PPRED) malloc(attributes_count * (storage.getCodesCount()) * sizeof(PRED));
-
+    size_t conclusion_count = 0;
     for (size_t i = 0; i < attributes_count; ++i) {
-        for (size_t j = 0; j < storage.getCodesCount(); ++j) {
-            concls[j + i * (storage.getCodesCount())].scale_val = j;
-            concls[j + i * (storage.getCodesCount())].par_idx = i;
+        conclusion_count += attributes[i].bnum + 1;
+    }
+
+    PPRED concls = (PPRED) malloc(conclusion_count * sizeof(PRED));
+
+    size_t conclusion_id = 0;
+    for (size_t i = 0; i < attributes_count; ++i) {
+        for (size_t level_id = 0; level_id <= attributes[i].bnum; ++level_id) {
+            concls[conclusion_id].scale_val = level_id;
+            concls[conclusion_id].par_idx = i;
+            ++conclusion_id;
         }
     }
 
 
     hypotesys = SDPenetratedYuleOneD(engine,
                                      concls,
-                                     attributes_count * storage.getCodesCount(),
+                                     conclusion_count,
                                      full_depth,
                                      fisher,
                                      &hypotesys_count,
