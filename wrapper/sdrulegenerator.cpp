@@ -94,4 +94,7 @@ void SdRuleGenerator::buildAllHypos(DWORD full_depth, double fisher, DWORD yule_
     for (size_t i = 0; i < hypotesys_count; ++i) {
         hypotesys[i].thread_arg = this;
     }
+
+    std::cout << "conclusion_count = " << conclusion_count << std::endl;
+    std::cout << "hypotesys_count = " << hypotesys_count << std::endl;
 }

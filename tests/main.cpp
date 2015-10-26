@@ -14,30 +14,37 @@ std::vector<std::vector<std::string> > makeTestInput() {
     test_input.push_back(std::vector<std::string> ());
     test_input.push_back(std::vector<std::string> ());
     test_input.push_back(std::vector<std::string> ());
+    test_input.push_back(std::vector<std::string> ());
 
-    test_input[0].push_back("a");
     test_input[0].push_back("b");
     test_input[0].push_back("c");
     test_input[0].push_back("c");
+    test_input[0].push_back("c");
     test_input[0].push_back("a");
 
-    test_input[1].push_back("a");
     test_input[1].push_back("b");
     test_input[1].push_back("c");
     test_input[1].push_back("c");
+    test_input[1].push_back("c");
     test_input[1].push_back("a");
 
-    test_input[2].push_back("a");
+    test_input[2].push_back("b");
     test_input[2].push_back("b");
     test_input[2].push_back("b");
     test_input[2].push_back("d");
     test_input[2].push_back("d");
 
-    test_input[3].push_back("a");
+    test_input[3].push_back("b");
     test_input[3].push_back("b");
     test_input[3].push_back("b");
     test_input[3].push_back("d");
     test_input[3].push_back("d");
+
+    test_input[4].push_back("b");
+    test_input[4].push_back("b");
+    test_input[4].push_back("b");
+    test_input[4].push_back("d");
+    test_input[4].push_back("d");
 
     return test_input;
 }
@@ -149,7 +156,7 @@ void testSdGenerator() {
     std::vector<std::vector<std::string> > test_data = makeTestInput();
     ScidiWrapper wrapper;
     wrapper.setData(test_data);
-    wrapper.makeRulesWithSDGenerator(2, 0.5, 1, 0.5);
+    wrapper.makeRulesWithSDGenerator(3, 0.9, 1, 0.1);
     std::vector<std::string> rules = wrapper.getRules();
     for (auto r : rules) {
         std::cout << r << std::endl;
