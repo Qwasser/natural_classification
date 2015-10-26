@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <unordered_set>
+#include <algorithm>
 
 void SdRuleGenerator::buildAttributes() {
     std::unordered_set<int> levels_set;
@@ -19,6 +20,7 @@ void SdRuleGenerator::buildAttributes() {
             levels_set.insert(elem_code);
         }
 
+        // revert to dummy levels
         size_t level_count = levels_set.size();
         int * levels = new int [level_count];
 
@@ -27,6 +29,8 @@ void SdRuleGenerator::buildAttributes() {
             levels[current_level] = level_code;
             ++current_level;
         }
+
+        std::sort(levels, levels + level_count);
 
         PATTR attr = &(attributes[i]);
 
