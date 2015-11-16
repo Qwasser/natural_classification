@@ -122,12 +122,6 @@ bool MyClassificator::Create(SEQStorage* pSeqStorage,
 	return 0;
 }
 
-void MyClassificator::Restore(SEQStorage* pSeqStorage, RulesStorage* pRulesStorage, CIdelObject** ObjsStorage, long SCounter)
-{
-	Create(pSeqStorage, pRulesStorage, ObjsStorage);
-	lObjsStorageCounter = SCounter;
-
-}
 
 void MyClassificator::GenClasses()
 {
@@ -151,21 +145,6 @@ void MyClassificator::WorkUpData()
 		Carcass::lObjsStorageSize = lObjsStorageCounter;
 
 		delete CurrSeq;
-	}
-
-    if(pSeqStorage->LrnNegStoreLength > 0)
-    {
-		SeqCount = pSeqStorage->LrnNegStoreLength;
-		for (int SeqCounter = 0; SeqCounter < SeqCount; SeqCounter++)
-		{
-			SEQSElem* CurrSeq = new SEQSElem(pSeqStorage->getWidth());
-			pSeqStorage->CreateElem(SeqCounter, CurrSeq);
-
-			nClNumber = OneIter(CurrSeq, SeqCounter + 1);
-
-            pSeqStorage->LrnNegStorage[SeqCounter].SetClassId(nClNumber);
-			delete CurrSeq;
-		}
 	}
 }
 
@@ -229,7 +208,6 @@ long MyClassificator::OneIter(SEQSElem* NextSeq, long IterCounter)
     {
         return(lClassNumber);
     }
-
 }
 
 void MyClassificator::getObjAsStr(SEQSElem* Pattern, char* chObject)
@@ -237,75 +215,6 @@ void MyClassificator::getObjAsStr(SEQSElem* Pattern, char* chObject)
 	CIdelObject TempObject;
 	TempObject.Create(lSeqLength, nCodesCount, Pattern);
 	TempObject.getObjAsStr(chObject);
-}
-
-// Поиск закономерностей применимых к начальному набору и опредление их выполнимости
-int MyClassificator::DefineRule( int nRuleNumber, int nClNumber)
-{
-	SToken CurrToken;
-	SToken SendToken;
-	bool isApplicable;
-	bool isCheckedOut;
-	long nRuleLength;
-	
-	isApplicable = true;
-	isCheckedOut = false;
-	
-	nRuleLength = (*pRulesStorage)[nRuleNumber].getRuleLength();
-	for (long l=0; l < nRuleLength; l++)
-	{
-			SendToken.nPos = (*pRulesStorage)[nRuleNumber][l].Shift;
-			SendToken.nValue = (*pRulesStorage)[nRuleNumber][l].Value;
-			SendToken.Sign = (*pRulesStorage)[nRuleNumber][l].Sign;
-
-			if ( (SendToken.Sign < 0) )
-			{
-					if ( ObjsStorage[nClNumber]->isBelong(&SendToken))
-					{
-							isApplicable = false;
-							break;
-					}
-					isApplicable = false;
-
-					if ( !IsAloneIdOb(&SendToken, nClNumber))
-					{
-							isApplicable = true;
-					}
-
-			}
-			else if ( (SendToken.Sign >= 0) && (!ObjsStorage[nClNumber]->isBelong(&SendToken)) )
-			{
-					isApplicable = false;
-					break;
-			}
-	}
-
-	if ( isApplicable)   //закономерность применима
-	{
-		CurrToken.nPos = (*pRulesStorage)[nRuleNumber].getTTPos();
-		CurrToken.nValue = (*pRulesStorage)[nRuleNumber].getTTValue();
-		CurrToken.Sign = (*pRulesStorage)[nRuleNumber].getTTSign();
-
-		if ((CurrToken.Sign == 1) && (ObjsStorage[nClNumber]->isBelong(&CurrToken)) ||
-			(CurrToken.Sign == -1) && (!ObjsStorage[nClNumber]->isBelong(&CurrToken)))
-		{
-				isCheckedOut = true; // если законмерность подтверждается
-				ObjsStorage[nClNumber]->RulMarks.push_back(short(nRuleNumber));
-				return(1);
-		}
-		else
-		{
-				return(2);  //закономерность опровергается
-		}
-	}
-	return(0);//не применима
-}
-//Составляет матрицу V (матрица предсказаний) для заданного идеального объекта
-void MyClassificator::CountMatrix(int nClNumber )
-{
-	CurrIdelObject = new CIdelObject;
-	CurrIdelObject = ObjsStorage[nClNumber];
-    this->FillVMatrix();
 }
 
 void MyClassificator::CountMatrix(CIdelObject* Cl)
@@ -333,85 +242,21 @@ double MyClassificator::Count_GammaCryterion( )
 // Процедура поиска идеального объекта
 long MyClassificator::NextIter(SEQSElem* NextSeq)
 {
-	/*
-	*	Шаг I
-	*/
 	m_NextSeq = NextSeq;
 	CurrIdelObject = new CIdelObject();
 	CurrIdelObject->Create(m_NextSeq, pSeqStorage->getCodesCount());
-	lIterCounter++;
-	
-	switch ( IdealizType )
-	{
-		case __IDEALIZTYPE_OFFICIAL_:
-		{
-			MaxDelInsBuild();
-			break;
-		}
-	}
 
-	bool bToCompare;
-	bool bForCompare;
-	SToken CompareToken;
-    bObjIsUnique = true;
-	long lClassNumber = 0;
+    lIterCounter++;
 
-	SToken CurrToken;
+    MaxDelInsBuild();
 
-	double FValue = 0;
+    CurrIdelObject->getObjAsStr(chObject);
+    CurrIdelObject->setGamma(Count_GammaCryterion());
+    ObjsStorage[lObjsStorageCounter] = CurrIdelObject;
+    CurrIdelObject = NULL;
 
-	for ( CurrToken.nPos = 0; CurrToken.nPos < lSeqLength; CurrToken.nPos++ )
-	{
-		for ( CurrToken.nValue = 0; CurrToken.nValue < nCodesCount; CurrToken.nValue++ )
-		{
-			FValue = FValue + VMatrix[CurrToken.nPos][CurrToken.nValue];
-		}
-	}
-
-	for ( long lObjsCounter = 0; lObjsCounter < lObjsStorageCounter; lObjsCounter++ )
-	{
-		bObjIsUnique = false;
-		for ( CompareToken.nPos = 0; CompareToken.nPos < lSeqLength; CompareToken.nPos++ )
-		{
-			for ( CompareToken.nValue = 0; CompareToken.nValue < nCodesCount; CompareToken.nValue++ )
-			{
-				bForCompare = ObjsStorage[lObjsCounter]->isBelong(&CompareToken);
-				bToCompare = CurrIdelObject->isBelong(&CompareToken);
-				if ( bForCompare != bToCompare )
-				{
-					bObjIsUnique = true;
-					break;
-				}
-			}
-			if ( bObjIsUnique )
-			{
-				break;
-			}
-		}
-		if ( !bObjIsUnique )
-		{
-			lClassNumber = lObjsCounter;
-			break;
-		}
-	}
-	if ( bObjIsUnique )
-	{
-		CurrIdelObject->getObjAsStr(chObject);
-		CurrIdelObject->setGamma(FValue);
-		ObjsStorage[lObjsStorageCounter] = CurrIdelObject;
-		CurrIdelObject = NULL;
-		lClassNumber = lObjsStorageCounter;
-		lObjsStorageCounter++;
-	}
-	else
-	{
-		if (CurrIdelObject != NULL)
-		{
-			delete CurrIdelObject;
-		}
-		CurrIdelObject = NULL;
-	}
-
+    long lClassNumber = lObjsStorageCounter;
+    lObjsStorageCounter++;
 	return lClassNumber;
 }
 
@@ -457,7 +302,6 @@ void MyClassificator::MaxDelInsBuild()
 	// удалени признаков с нулевым приростом Г критерия
 	DelZeroFeature(CurrIdelObject);
 }
-
 
 void MyClassificator::SearchForAction(CIdelObject* i_Object)
 {
@@ -659,188 +503,6 @@ void MyClassificator::DelZeroFeature(CIdelObject* i_Object)
 	delete CurrToken;
 }
 
-void MyClassificator::OfficialBuild()
-{
-	SToken* CurrToken = new SToken;
-	SToken LastPriznak;
-
-	double dMaxGamma_plus=0, dMaxGamma_minus=0;
-	double dCurrGammaIncrease;
-	double Gamma_Straight;
-	bool FinishFlag = true;
-
-	InitObj = new char[(nCodesCount + 3) * lSeqLength + 2];
-	CurrObj = new char[(nCodesCount + 3) * lSeqLength + 2];
-	CurrIdelObject->getObjAsStr(InitObj);
-	//
-	CurrIdelObject->getObjAsStr(CurrObj);
-
-	/*
-	*	Шаг II
-	*/
-	FillVMatrix();
-	Gamma_Straight = Count_GammaCryterion();
-	LastPriznak.nPos = lSeqLength;
-
-	char* digit, *name;
-	sprintf(digit, "%d", id);
-	char ext[]=".bmp";
-    name = new char[strlen(ext)+strlen(digit)+1];
-	strcpy(name, digit);
-	strcat(name, ext);
-
-	while ( FinishFlag )
-	{
-		I_negative.clear();
-		I_positive.clear();
-		dMaxGamma_plus = 0;
-		dMaxGamma_minus = 0;
-
-		FinishFlag = false;
-		//перебираем признаки и смотрим прирост Г при удалении
-CurrToken->Sign = -1;
-		for ( CurrToken->nPos = 0; CurrToken->nPos < lSeqLength; CurrToken->nPos++ )
-		{
-			for ( CurrToken->nValue = 0; CurrToken->nValue < nCodesCount; CurrToken->nValue++ )
-			{
-				if ( CurrIdelObject->isBelong(CurrToken) && ObviousPred(*CurrToken) )
-				{
-					dCurrGammaIncrease = ExcludeTest(CurrToken);
-
-					if ( dCurrGammaIncrease > 0. )
-					{
-						SToken Candidate;
-						Candidate.nPos = CurrToken->nPos;
-						Candidate.nValue = CurrToken->nValue;
-
-						I_negative.insert(std::make_pair(dCurrGammaIncrease, Candidate));
-					}
-				}
-			}
-		}
-
-		//перебираем признаки и смотрим прирост Г при вставке
-CurrToken->Sign = 1;
-		for ( CurrToken->nPos = 0; CurrToken->nPos < lSeqLength; CurrToken->nPos++ )
-		{
-			for ( CurrToken->nValue = 0; CurrToken->nValue < nCodesCount; CurrToken->nValue++ )
-			{
-				if ( !CurrIdelObject->isBelong(CurrToken) && ObviousPred(*CurrToken) )
-				{
-					dCurrGammaIncrease = IncludeTest(CurrToken);
-
-					if ( dCurrGammaIncrease > 0. )
-					{
-						SToken Candidate;
-						Candidate.nPos = CurrToken->nPos;
-						Candidate.nValue = CurrToken->nValue;
-						I_positive.insert(std::make_pair(dCurrGammaIncrease, Candidate));
-					}
-				}
-			}
-		}
-
-		/*
-		*	Шаг IV
-		*/
-		GI max_ex = I_negative.end();
-		GI max_in = I_positive.end();
-		//ищем максимум для удаления с проверкой, что есть явное предсказание
-		if( !I_negative.empty() )
-			dMaxGamma_minus = (*(--max_ex)).first;
-
-		//ищем максимум для вставки с проверкой, что есть явное предсказание
-		if( !I_positive.empty() )
-			dMaxGamma_plus = (*(--max_in)).first;
-
-		//выбираем: вставка или удаление
-		if ( dMaxGamma_plus < dMaxGamma_minus )
-		{
-			SToken Candidate_ = (*max_ex).second;
-			if(LastPriznak.nPos!=lSeqLength && LastPriznak.nPos==Candidate_.nPos && LastPriznak.nValue==Candidate_.nValue)
-				FinishFlag = false;//найдено противоречие
-			else
-				FinishFlag = true; //значит еще одна итерация
-
-			LastPriznak = (*max_ex).second;
-			CurrIdelObject->ExcludeT(&(*max_ex).second);
-
-
-			FillVMatrix();
-				CurrIdelObject->getObjAsStr(CurrObj);
-		}
-		else if ( dMaxGamma_plus > 0. )
-		{
-			SToken Candidate_ = (*max_in).second;
-			if(LastPriznak.nPos!=lSeqLength && LastPriznak.nPos==Candidate_.nPos && LastPriznak.nValue==Candidate_.nValue)
-				FinishFlag = false;//найдено противоречие
-			else
-				FinishFlag = true; //значит еще одна итерация
-
-
-			LastPriznak = (*max_in).second;
-			CurrIdelObject->IncludeT(&(*max_in).second);
-
-			FillVMatrix();
-			Gamma_Straight = Count_GammaCryterion();
-				CurrIdelObject->getObjAsStr(CurrObj);
-}
-	}
-//==========
-// удалени признаков с нулевым приростом Г критерия
-	for ( CurrToken->nPos = 0; CurrToken->nPos < lSeqLength; CurrToken->nPos++ )
-	{
-		for ( CurrToken->nValue = 0; CurrToken->nValue < nCodesCount; CurrToken->nValue++ )
-		{
-			if ( CurrIdelObject->isBelong(CurrToken) )
-			{
-				dCurrGammaIncrease = ExcludeTest(CurrToken);
-				if ( fabs(dCurrGammaIncrease) == double(0) )
-				{
-					CurrIdelObject->ExcludeT(CurrToken);
-					FillVMatrix();
-				}
-			}
-		}
-	}
-	//========== идеал получен. записываем максимум =
-	CurrIdelObject->setGamma(Count_GammaCryterion());
-
-	id++;
-	delete[] name;
-	delete[] InitObj;
-	delete[] CurrObj;
-	InitObj=NULL;
-	CurrObj=NULL;
-	delete CurrToken;
-}
-void MyClassificator::SetObviousPred()
-{
-	FiltrTargets.clear();
-	RuleSection prev, follow;
-
-	prev.Shift = 0;
-	prev.Sign = 0;
-	prev.Value = 0;
-	for(int i=0; i<(int)FilterSize; i++)
-	{
-		follow.Shift = p_AplicReg[i]->getTTPos();
-		follow.Sign = p_AplicReg[i]->getTTSign();
-		follow.Value = p_AplicReg[i]->getTTValue();
-		if(follow!=prev)
-		{
-			FiltrTargets.push_back(follow);
-		}
-		prev = follow;
-	}
-	
-	
-	m_progress << "\tЯвно предсказываются " << FiltrTargets.size() << " различных атомов";
-	ReportLog(m_progress.str());
-	m_progress.str("");
-	
-//fclose(seq);
-}
 
 // Учтем уровень предсказания предикатов по вероятности у отобранных правил 
 void MyClassificator::DiscountRule(RuleLink* pRule, RuleSection &prev)
@@ -1040,43 +702,29 @@ long MyClassificator::Filtrovka()
 
 	return FilterSize;
 }
-// ========
-void MyClassificator::PrintRules(Rule* Massiv, long Size, std::streambuf *File)
-{
-	std::cout.rdbuf(File);
-	std::cout << "-------------\n";
-	for(int s=0; s<Size; s++)
-	{
-		char Chain[MYMAXSTR];
-		Massiv[s].getChainStr(Chain);
-		std::cout << Chain << std::endl;
-	}
-	File = std::cout.rdbuf();
-
-}
 
 std::vector<std::string> MyClassificator::RulesToStrArr(Rule* Massiv, long Size)
 {
-	std::vector<std::string> rArr(Size);
-	for(int s=0; s<Size; s++)
-	{
-		char Chain[MYMAXSTR];
-		Massiv[s].getChainStr(Chain);
-		rArr[s] = Chain;
-	}
-	return rArr;
+    std::vector<std::string> rArr(Size);
+    for(int s=0; s<Size; s++)
+    {
+        char Chain[MYMAXSTR];
+        Massiv[s].getChainStr(Chain);
+        rArr[s] = Chain;
+    }
+    return rArr;
 }
 
 std::vector<std::string> MyClassificator::RulesToStrArr(std::vector<RuleLink*>& Massiv, long Size)
 {
-	std::vector<std::string> rArr(Size);
-	for(int s=0; s<Size; s++)
-	{
-		char Chain[MYMAXSTR];
-		Massiv[s]->getChainStr(Chain);
-		rArr[s] = Chain;
-	}
-	return rArr;
+    std::vector<std::string> rArr(Size);
+    for(int s=0; s<Size; s++)
+    {
+        char Chain[MYMAXSTR];
+        Massiv[s]->getChainStr(Chain);
+        rArr[s] = Chain;
+    }
+    return rArr;
 }
 //---------------------------------------------------------------------------
 //
@@ -1548,55 +1196,13 @@ double MyClassificator::ExcludeTest(SToken* ExcludeToken)
 	CurrIdelObject->IncludeT(ExcludeToken);
 	return W;
 }
-//---------------------------------------------------------------------------
-void MyClassificator::Insider(CIdelObject* ideal, SToken& ct, bool &in, bool &ex)
-{
-	double dMaxGamma_plus=0, dMaxGamma_minus=0;
-	double Gamma_Straight;
 
-	CountMatrix(ideal);//FillVMatrix();
-	Gamma_Straight = Count_GammaCryterion();
-
-//	AboutFrm->InitO->Caption = FloatToStrF(Count_GammaCryterion(), ffGeneral, 8, 4);
-	in = false;
-	ex = false;
-
-	SearchForAction(ideal);
-    //just find extremum without actions
-	rGI max_ex = I_negative.rbegin();
-	rGI max_in = I_positive.rbegin();
-	if( !I_negative.empty() )
-		dMaxGamma_minus = (*max_ex).first;
-	if( !I_positive.empty() )
-		dMaxGamma_plus = (*max_in).first;
-
-	//выбираем: вставка или удаление
-	if ( dMaxGamma_plus <  dMaxGamma_minus)
-	{
-		ex = true;
-		ct = (*max_ex).second;
-//		AboutFrm->CurrO->Caption = FloatToStrF(dMaxGamma_minus, ffGeneral, 8, 4);
-	}
-	else if ( dMaxGamma_plus > 0. )
-	{
-		in = true;
-		ct = (*max_in).second;
-//		AboutFrm->CurrO->Caption = FloatToStrF(dMaxGamma_plus, ffGeneral, 8, 4);
-	}
-	else
-	{
-;//		AboutFrm->CurrO->Caption = "0";
-	}
-
-
-}
 //---------------------------------------------------------------------------
 std::vector<std::string> MyClassificator::IncludeTest(CIdelObject* ideal, SToken s1)
 {
 	//CountMatrix(ideal);
 	std::vector<std::string> p2,p3;
 	s1.Sign = 1;
- //	ObviousPred(s1);
 	if(!ideal->isBelong(&s1))
 	{
 		InitObj = new char[MYMAXSTR];
