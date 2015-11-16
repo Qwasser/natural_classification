@@ -3,6 +3,7 @@
 #include <list>
 #include <iostream>
 #include <numeric>
+#include <iterator>
 
 #include <cstddef>
 #include <cassert>
@@ -18,7 +19,7 @@
 #include "scidi_wrapper.h"
 #include "sdrulegenerator.h"
 
-void ScidiWrapper::setData(const std::vector<std::vector<std::string> > & input_data) {
+SEQStorage * ScidiWrapper::makeDataStorage(const std::vector<std::vector<std::string> > & input_data) {
     Sequence * storage = new Sequence [input_data.size()];
     for (size_t i = 0; i < input_data.size(); ++i) {
         storage[i] = Sequence();
@@ -27,8 +28,13 @@ void ScidiWrapper::setData(const std::vector<std::vector<std::string> > & input_
         }
     }
 
-    data = new SEQStorage(storage, input_data.size());
+    SEQStorage * res_storage = new SEQStorage(storage, input_data.size());
     delete [] storage;
+    return res_storage;
+}
+
+void ScidiWrapper::setData(const std::vector<std::vector<std::string> > & input_data) {
+    data = makeDataStorage(input_data);
 }
 
 std::vector<std::vector<std::string> > ScidiWrapper::getData() {
@@ -119,7 +125,19 @@ std::vector<double> ScidiWrapper::getYule() {
     return getCriteriaValues(true);
 }
 
-void ScidiWrapper::makeClasses() {
+std::vector<double> ScidiWrapper::getCP() {
+    std::vector<double> cp_values(rule_storage->getSize());
+
+    size_t counter = 0;
+    for (ruleID iter = rule_storage->begin(); iter != rule_storage->end(); ++iter) {
+        cp_values[counter] = iter->getCP();
+        ++counter;
+    }
+
+    return cp_values;
+}
+
+int ScidiWrapper::makeClasses(SEQStorage * storage, CIdelObject ** id_storage) {
     ClassificatorSettings settings = {
         /* .IdealizType= */ __IDEALIZTYPE_OFFICIAL_,
         /* .ObjsSource= */ __IDEALSOURCE_ORIGINOBJS_
@@ -128,13 +146,10 @@ void ScidiWrapper::makeClasses() {
         /* .RecSourceNeg= */
     };
 
-    Classificator clf;
+    MyClassificator clf;
 
-    ideal_storage = new CIdelObject*[ data->getLength() ];
-
-    data->ClearClasses();
-
-    clf.Create(data, rule_storage, ideal_storage);
+    storage->ClearClasses();
+    clf.Create(storage, rule_storage, id_storage);
 
     clf.lObjsStorageCounter = 0;
     clf.SetSource(settings.ObjsSource);
@@ -149,11 +164,32 @@ void ScidiWrapper::makeClasses() {
     clf.setCommand(dummy_command);
 
     clf.GenClasses();
-    ideal_storage_size = clf.GetOutputSize();
 
     delete dummy_thread;
     delete dummy_command;
     delete dummy_event;
+
+    return clf.GetOutputSize();
+}
+
+void ScidiWrapper::makeClasses() {
+    ideal_storage = new CIdelObject*[ data->getLength() ];
+    ideal_storage_size = makeClasses(data, ideal_storage);
+}
+
+std::vector<std::vector<std::string> > ScidiWrapper::getIdealsFromNewData(const std::vector<std::vector<std::string> > & new_data) {
+    SEQStorage * new_storage = makeDataStorage(new_data);
+
+    CIdelObject** new_ideal_storage = new CIdelObject*[ new_storage->getLength() ];
+    int new_ideal_storage_size = makeClasses(new_storage, new_ideal_storage);
+
+    std::vector<std::vector<std::string> > ideals = getIdealObjects(new_storage,
+                                                                    new_ideal_storage,
+                                                                    new_ideal_storage_size);
+
+    delete new_storage;
+    delete new_ideal_storage;
+    return ideals;
 }
 
 std::vector<int> ScidiWrapper::getClasses() {
@@ -164,35 +200,45 @@ std::vector<int> ScidiWrapper::getClasses() {
     return classes;
 }
 
-std::vector<std::vector<std::string> > ScidiWrapper::getIdealObjects() {
+std::vector<std::vector<std::string> > ScidiWrapper::getIdealObjects(SEQStorage * storage,
+                                                                     CIdelObject ** i_storage,
+                                                                     int i_storage_size) {
     std::vector<std::vector<std::string> > ideals;
 
-    for (size_t class_id = 0; class_id < ideal_storage_size; ++class_id) {
+    for (size_t class_id = 0; class_id < i_storage_size; ++class_id) {
 
-        CIdelObject* o = ideal_storage[class_id];
+        CIdelObject* o = i_storage[class_id];
 
         std::vector<std::string> current_ideal;
 
-        for (auto l = 0; l < data->getWidth(); ++l)
+        for (auto l = 0; l < storage->getWidth(); ++l)
         {
             std::vector<std::string> possible_values;
 
-            for (auto c = 0; c < data->getCodesCount(); ++c) {
+            for (auto c = 0; c < storage->getCodesCount(); ++c) {
                 if (o->isBelong(l, c))
                 {
-                    std::string v(data->Decode(c));
+                    std::string v(storage->Decode(c));
                     possible_values.push_back(v);
                 }
             }
 
-            string concatenated_possible_values =
-                    accumulate( possible_values.begin(), possible_values.end(), string("|") );
-            current_ideal.push_back(concatenated_possible_values);
+            std::stringstream s;
+            const char * sep = "|";
+            copy(possible_values.begin(),
+                 possible_values.end(),
+                 std::ostream_iterator<std::string>(s, sep));
+
+            current_ideal.push_back(s.str());
         }
 
         ideals.push_back(current_ideal);
     }
     return ideals;
+}
+
+std::vector<std::vector<std::string> > ScidiWrapper::getIdealObjects() {
+    return getIdealObjects(data, ideal_storage, ideal_storage_size);
 }
 
 void ScidiWrapper::addRuleFromString(std::string rule_str) {

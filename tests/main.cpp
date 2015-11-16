@@ -95,6 +95,26 @@ void genClassesTest() {
     std::cout << "Class generation test passed!" << std::endl;
 }
 
+void getClassesFromNewDataTest() {
+    std::vector<std::vector<std::string> > test_data = makeTestInput();
+    ScidiWrapper wrapper;
+    wrapper.setData(test_data);
+    wrapper.makeRules(0.25, 0.5, 0.7, 2);
+
+    std::vector<std::vector<std::string> > new_data;
+    new_data.push_back(std::vector<std::string> ());
+
+    new_data[0].push_back("b");
+    new_data[0].push_back("c");
+    new_data[0].push_back("c");
+    new_data[0].push_back("c");
+    new_data[0].push_back("a");
+
+    wrapper.getIdealsFromNewData(new_data);
+
+    std::cout << "Data set test passed!" << std::endl;
+}
+
 void ruleParseTest() {
     std::vector<std::vector<std::string> > test_data = makeTestInput();
     ScidiWrapper wrapper;
@@ -172,6 +192,8 @@ int main() {
     genClassesTest();
 
     testSdGenerator();
+
+    getClassesFromNewDataTest();
     return 0;
 }
 

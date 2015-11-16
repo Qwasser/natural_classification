@@ -299,8 +299,10 @@ class ScidiWrapper(_object):
     def makeClasses(self): return _scidi_wrapper.ScidiWrapper_makeClasses(self)
     def getClasses(self): return _scidi_wrapper.ScidiWrapper_getClasses(self)
     def getIdealObjects(self): return _scidi_wrapper.ScidiWrapper_getIdealObjects(self)
+    def getIdealsFromNewData(self, *args): return _scidi_wrapper.ScidiWrapper_getIdealsFromNewData(self, *args)
     def getFisher(self): return _scidi_wrapper.ScidiWrapper_getFisher(self)
     def getYule(self): return _scidi_wrapper.ScidiWrapper_getYule(self)
+    def getCP(self): return _scidi_wrapper.ScidiWrapper_getCP(self)
     def makeRulesWithSDGenerator(self, *args): return _scidi_wrapper.ScidiWrapper_makeRulesWithSDGenerator(self, *args)
     def setRulesFromStringVector(self, *args): return _scidi_wrapper.ScidiWrapper_setRulesFromStringVector(self, *args)
     def __init__(self): 

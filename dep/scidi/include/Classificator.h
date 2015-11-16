@@ -27,12 +27,12 @@ public:
 };
 
 
-class Classificator : public ObjReporter
+class MyClassificator : public ObjReporter
 {
 public:
-	Classificator();
-	Classificator(int IType);
-	virtual ~Classificator();
+	MyClassificator();
+	MyClassificator(int IType);
+	virtual ~MyClassificator();
 
 	void Restore(SEQStorage* pSeqStorage, RulesStorage* pRulesStorage, CIdelObject** ObjsStorage, long SCounter);
 	bool Create(SEQStorage* pSeqStorage, RulesStorage* pRulesStorage, CIdelObject** ObjsStorage);

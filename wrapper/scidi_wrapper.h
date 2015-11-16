@@ -7,6 +7,7 @@
 #include "RulesStorage.h"
 #include "Tunnels.h"
 #include "CIdelObject.h"
+#include "Classificator.h"
 
 #include "ruleparser.h"
 
@@ -22,8 +23,11 @@ public:
     std::vector<int> getClasses();
     std::vector<std::vector<std::string> > getIdealObjects();
 
+    std::vector<std::vector<std::string> > getIdealsFromNewData(const std::vector<std::vector<std::string> > & new_data);
+
     std::vector<double> getFisher();
     std::vector<double> getYule();
+    std::vector<double> getCP();
 
     void makeRulesWithSDGenerator(unsigned int full_depth,
                                   double fisher,
@@ -53,4 +57,10 @@ private:
     Rule * parseRule(std::string rule_str);
 
     void intitRuleStorage();
+
+    SEQStorage * makeDataStorage(const std::vector<std::vector<std::string> > & data);
+    int makeClasses(SEQStorage * storage, CIdelObject ** ideal_storage);
+    std::vector<std::vector<std::string> > getIdealObjects(SEQStorage * storage,
+                                                         CIdelObject ** i_storage,
+                                                         int i_storage_size);
 };
