@@ -7,7 +7,7 @@
 #include "RulesStorage.h"
 #include "Tunnels.h"
 #include "CIdelObject.h"
-#include "Classificator.h"
+#include "MyClassificator.h"
 
 #include "ruleparser.h"
 

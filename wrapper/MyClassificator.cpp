@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "Classificator.h"
+#include "MyClassificator.h"
 #include "manager/Carcass.h"
 
 int MyClassificator::id = 0;
@@ -325,7 +325,6 @@ void MyClassificator::SearchForAction(CIdelObject* i_Object)
 					Candidate.nValue = CurrToken->nValue;
 
 					I_negative.insert(std::make_pair(dCurrGammaIncrease, Candidate));
-					m_progress << ">--\t может удалим " << GetCodeTable()->Decode( Candidate.nValue ) << " на позиции "<< Candidate.nPos<< "\n";
 				}
 			}
 		}
@@ -345,7 +344,6 @@ void MyClassificator::SearchForAction(CIdelObject* i_Object)
 					Candidate.nPos = CurrToken->nPos;
 					Candidate.nValue = CurrToken->nValue;
 					I_positive.insert(std::make_pair(dCurrGammaIncrease, Candidate));
-					m_progress << ">--\t может вставим " << GetCodeTable()->Decode( Candidate.nValue ) << " на позицию "<< Candidate.nPos<< "\n";
 				}
 			}
 		}
@@ -381,19 +379,11 @@ bool MyClassificator::ActionExtremum(CIdelObject* i_Object)
 		for(GI j = i1.first; j != i1.second; j++)
 		{
 			i_Object->ExcludeT(&(*j).second);
-			m_progress	//<< "\tКритерий окажется равным [ " << Count_GammaCryterion() 
-					<< " когда в объекте удалим атом на " << (*j).second.nPos 
-					<< " месте со значением " << (*j).second.nValue;
 		}
-		//FillVMatrix();//V - целиком считать матрицу
+
 		Filtrovka();//W - только обновления посмотреть		
-		// _DEBUG__B
 		CurrIdelObject->getObjAsStr(chObject);
-		m_progress << "\n" << chObject << "\n";
-		// _DEBUG__E
-		
-		ReportLog(m_progress.str());
-		m_progress.str("");
+
 		
 		//========== идеал получен. записываем максимум =
 		i_Object->setGamma(i_Object->getGamma() + dMaxGamma_minus);
@@ -408,27 +398,17 @@ bool MyClassificator::ActionExtremum(CIdelObject* i_Object)
 		for(GI j = i1.first; j != i1.second; j++)
 		{
 			i_Object->ExcludeT(&(*j).second);
-			m_progress	//<< "\tКритерий окажется равным [ " << Count_GammaCryterion() 
-					<< " когда в объекте удалим атом на " << (*j).second.nPos 
-					<< " месте со значением " << (*j).second.nValue;
 		}
 
 		for(GI j = i2.first; j != i2.second; j++)
 		{
 			i_Object->IncludeT(&(*j).second);
-			m_progress	//<< "\tКритерий окажется равным [ " << Count_GammaCryterion() 
-					<< " в объект вставим атом на " << (*j).second.nPos 
-					<< " месте со значением " << (*j).second.nValue;
 		}
 		//FillVMatrix();//V - целиком считать матрицу
 		Filtrovka();//W - только обновления посмотреть		
 
 		// _DEBUG__B
 		CurrIdelObject->getObjAsStr(chObject);
-		m_progress << "\n" << chObject << "\n";
-		// _DEBUG__E
-		ReportLog(m_progress.str());
-		m_progress.str("");
 		
 		//========== идеал получен. записываем максимум =
 		i_Object->setGamma(i_Object->getGamma() + dMaxGamma_plus);
@@ -448,19 +428,12 @@ bool MyClassificator::ActionExtremum(CIdelObject* i_Object)
 		for(GI j = i2.first; j != i2.second; j++)
 		{
 			i_Object->IncludeT(&(*j).second);
-			m_progress	//<< "\tКритерий окажется равным [ " << Count_GammaCryterion() 
-					<< " в объект вставим атом на " << (*j).second.nPos 
-					<< " месте со значением " << (*j).second.nValue;
 		}
 		//FillVMatrix();//V - целиком считать матрицу
 		Filtrovka();//W - только обновления посмотреть		
 
 		// _DEBUG__B
 		CurrIdelObject->getObjAsStr(chObject);
-		m_progress << "\n" << chObject << "\n";
-		// _DEBUG__E
-		ReportLog(m_progress.str());
-		m_progress.str("");
 		
 		//========== идеал получен. записываем максимум =
 		i_Object->setGamma(i_Object->getGamma() + dMaxGamma_plus);
@@ -485,11 +458,6 @@ void MyClassificator::DelZeroFeature(CIdelObject* i_Object)
 				if ( fabs(dCurrGammaIncrease) == double(0) )
 				{
 					i_Object->ExcludeT(CurrToken);
-					m_progress	<< "$$$ есть признак без предсказаний: удалим атом на\n " << CurrToken->nPos
-					<< " месте со значением " << CurrToken->nValue;
-					ReportLog(m_progress.str());
-					m_progress.str("");
-					Filtrovka();
 				}
 			}
 		}
@@ -620,12 +588,6 @@ int MyClassificator::FillVMatrix()
 
 	}
 
-	m_progress << "\tЗаполняем массив p_AplicReg " << FilterSize << " закономерностями";
-	m_progress << "\n\tЯвно предсказываются " << FiltrTargets.size() << " различных атомов";
-	ReportLog(m_progress.str());
-	m_progress.str("");
-
-
 	return(-1);
 }
 //---------------------------------------------------------------------------
@@ -691,10 +653,6 @@ long MyClassificator::Filtrovka()
 
 	}
 	p_AplicReg.resize(FilterSize);
-	m_progress << "\tЗаполняем массив p_AplicReg " << FilterSize << " закономерностями";
-	ReportLog(m_progress.str());
-	m_progress.str("");
-
 	return FilterSize;
 }
 
