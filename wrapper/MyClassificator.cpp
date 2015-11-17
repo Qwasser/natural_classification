@@ -285,11 +285,9 @@ void MyClassificator::MaxDelInsBuild()
 	double Gamma_Straight;
 	bool FinishFlag = true;
 
-	/*
-	*	Шаг II
-	*/
 	FillVMatrix();
 	Gamma_Straight = Count_GammaCryterion();
+
 	CurrIdelObject->setGamma(Gamma_Straight);
 
 	while ( FinishFlag )
@@ -299,6 +297,7 @@ void MyClassificator::MaxDelInsBuild()
 		FinishFlag = ActionExtremum(CurrIdelObject);
 		
 	}
+
 	// удалени признаков с нулевым приростом Г критерия
 	DelZeroFeature(CurrIdelObject);
 }
@@ -310,8 +309,6 @@ void MyClassificator::SearchForAction(CIdelObject* i_Object)
 	I_negative.clear();
 	I_positive.clear();
 
-	m_progress << "Имеем: " << CurrIdelObject->getGamma() <<"\n------------------\n";
-	//перебираем признаки и смотрим прирост Г при удалении
 	CurrToken->Sign = -1;
 	for ( CurrToken->nPos = 0; CurrToken->nPos < lSeqLength; CurrToken->nPos++ )
 	{
@@ -353,8 +350,6 @@ void MyClassificator::SearchForAction(CIdelObject* i_Object)
 			}
 		}
 	}
-	ReportLog(m_progress.str());
-	m_progress.str("");
 
 	delete CurrToken;
 }
