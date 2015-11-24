@@ -186,7 +186,7 @@ double Idealizer::computeExcludeGammaChange(SToken &token) {
 void Idealizer::filterApplicableRulesByConsequence(SToken& token) {
     filtered_rules.resize(0);
 
-    for ( RuleLink * rule : applicable_rules) {
+    for (RuleLink * rule : applicable_rules) {
         if((rule->getTTPos() == token.nPos ) && (rule->getTTValue() == token.nValue)) {
             filtered_rules.push_back(rule);
         }
@@ -216,20 +216,53 @@ double Idealizer::getRuleVValue(RuleLink * rule) {
 
     if ( is_positive && is_belong )
     {
-            v_value = logInverseProba(cp_value); // если законмерность подверждается
+        v_value = logInverseProba(cp_value); // если законмерность подверждается
     }
     else if ( !is_positive && !is_belong  )
     {
-            v_value = logInverseProba(fabs(cp_value));  // если законмерность подверждается
+        v_value = logInverseProba(fabs(cp_value));  // если законмерность подверждается
     }
     else if ( is_positive && !is_belong )
     {
-            v_value = -logInverseProba(cp_value);   // если законмерность опровергается
+        v_value = -logInverseProba(cp_value);   // если законмерность опровергается
     }
     else if ( !is_positive && is_belong )
     {
-            v_value = -logInverseProba(fabs(cp_value));   // если законмерность опровергается
+        v_value = -logInverseProba(fabs(cp_value));   // если законмерность опровергается
     }
 
     return v_value;
+}
+
+
+void Idealizer::filterApplicableRulesByPremise(SToken& token)
+{
+    for (RuleLink * rule : applicable_rules)
+    {
+       long rule_length = rule->getRuleLength();
+       bool isOld = false;
+       for (long l=0; l < rule_length; l++)
+       {
+           SToken current_predicate;
+           current_predicate.nPos = *rule[l].Shift;
+           current_predicate.nValue = *rule[l].Value;
+           current_predicate.Sign = *rule[l].Sign;
+
+            if ( (current_predicate.Sign > 0 ) && (current_predicate.nPos == token->nPos ) && (current_predicate.nValue == token->nValue) )
+            {
+                isOld = true;
+            }
+            // проверим, удаляем ли мы последнее значение (stok) для признака
+            // если удалили, то любой другой на его месте будет одинок
+            if ( IsAlone(&current_predicate) && (current_predicate.Sign < 0 ) && (current_predicate.nPos == token->nPos ) && (current_predicate.nValue != token->nValue) )
+            {
+                isOld = true;
+            }
+
+       }
+       if ( isOld )
+       {
+            filtered_rules.push_back(rule);
+       }
+    }
 }
