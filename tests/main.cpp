@@ -7,6 +7,7 @@
 
 #include <wrapper/scidi_wrapper.h>
 #include <wrapper/sdrulegenerator.h>
+#include <wrapper/idealizer.h>
 
 std::vector<std::vector<std::string> > makeTestInput() {
     std::vector<std::vector<std::string> > test_input;
@@ -183,6 +184,21 @@ void testSdGenerator() {
     }
 }
 
+void testIdealizer() {
+    std::vector<std::vector<std::string> > test_data = makeTestInput();
+    ScidiWrapper wrapper;
+    wrapper.setData(test_data);
+    wrapper.makeRules(0.25, 0.5, 0.7, 2);
+
+
+    SEQSElem* object = new SEQSElem(wrapper.data->getWidth());
+    wrapper.data->CreateElem(0, object);
+
+    Idealizer test_idealizer(*object, *wrapper.data, *wrapper.rule_storage);
+
+    std::cout << test_idealizer.getGammaValue() << std::endl;
+}
+
 int main() {
     scidiLinkageTest();
     ruleParseTest();
@@ -194,6 +210,8 @@ int main() {
     testSdGenerator();
 
     getClassesFromNewDataTest();
+
+    testIdealizer();
     return 0;
 }
 

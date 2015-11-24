@@ -36,5 +36,5 @@ INCLUDE_DIRECTORIES(${wrapper_SOURCE_DIR})
 SET(CMAKE_SWIG_FLAGS "")
 
 SET_SOURCE_FILES_PROPERTIES(scidi_wrapper.i PROPERTIES CPLUSPLUS ON)
-SWIG_ADD_MODULE(scidi_wrapper python scidi_wrapper.i scidi_wrapper.cpp ruleparser.cpp sdrulegenerator.cpp MyClassificator.cpp CIdelObject.cpp)
+SWIG_ADD_MODULE(scidi_wrapper python scidi_wrapper.i scidi_wrapper.cpp ruleparser.cpp sdrulegenerator.cpp MyClassificator.cpp CIdelObject.cpp idealizer.cpp)
 SWIG_LINK_LIBRARIES(scidi_wrapper scidi.a libdiscovery.a ${PYTHON_LIBRARIES} ${wxWidgets_LIBRARIES})

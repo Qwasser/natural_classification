@@ -25,7 +25,8 @@ public:
 			return true;
 		else
 			return false;
-	};
+    }
+
 	bool operator!= (RuleSection y)
 	{
 		if (this->Shift != y.Shift ||
@@ -35,6 +36,19 @@ public:
 		else
 			return false;
 	};
+
+    inline bool operator<(const RuleSection& rhs) const {
+      if (this->Shift < rhs.Shift) {
+        return true;
+      }
+      else if (this->Sign < rhs.Sign) {
+          return true;
+      }
+      else if (this->Value < rhs.Value) {
+          return true;
+      }
+      return false;
+	}
 };
 
 typedef RuleSection Predicate;

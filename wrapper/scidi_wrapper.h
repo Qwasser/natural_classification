@@ -43,9 +43,10 @@ public:
     }
 
 
-private:
     SEQStorage * data = NULL;
     RulesStorage * rule_storage = NULL;
+
+private:
     RuleSettings current_rule_settings;
 
     CIdelObject** ideal_storage = NULL;

@@ -1104,8 +1104,8 @@ bool MyClassificator::IsAlone(SToken* TToken)
                 }
         }
         return true;
-
 }
+
 //---------------------------------------------------------------------------
 //Проверяет один ли признак у идального объекта из хранилища на данной позиции или нет
 bool MyClassificator::IsAloneIdOb(SToken* TToken, int nClNumber)
