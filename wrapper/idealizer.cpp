@@ -56,7 +56,15 @@ void Idealizer::filterApplicableRules() {
 				if ( ideal_object.isBelong(&current_token))
 				{
                     is_applicable = false;
+                    break;
 				}
+
+                is_applicable = false;
+
+                if ( !isAlone(current_token))
+                {
+                    is_applicable = true;
+                }
     		}    
             
 			else if (!ideal_object.isBelong(&current_token))
@@ -111,9 +119,9 @@ void Idealizer::runFastIdealization() {
     while (!stop_flag)
     {
         computeModificationsImpact();
-//        stop_flag = tryApplyBestModification();
+        stop_flag = tryApplyBestModification();
     }
-//    deleteZeroFeatures();
+    deleteZeroFeatures();
 }
 
 void Idealizer::computeModificationsImpact() {
@@ -136,7 +144,7 @@ void Idealizer::computeModificationsImpact() {
 
             current_token.Sign = 1;
             if ( ideal_object.isBelong(&current_token) && isApplicableRuleConsequence(current_token) ) {
-//                gamma_change = includeTest(current_token);
+                gamma_change = includeTest(current_token);
 
                 if ( gamma_change > 0. )
                 {
@@ -172,13 +180,13 @@ double Idealizer::computeExcludeGammaChange(SToken &token) {
     double S1 = 0, S2 = 0, S4 = 0;
 
     filterApplicableRulesByConsequence(token);
-    S1 = -2. * computeGammaChangeFromFilteredRules();
+    S1 = -2. * computeGammaChangeFromFilteredRules(true);
 
-//    Filtr_Del1(token);
-//    S2 = -1. * PartialSum();
+    filterRulesBrokenWithDelition(token);
+    S2 = -1. * computeGammaChangeFromFilteredRules();
 
-//    Filtr_Del4(token);
-//    S4 = PartialSum();
+    filterNewApplicableRulesAfterDelition(token);
+    S4 = computeGammaChangeFromFilteredRules();
 
     return (S1 + S2 + S4);
 }
@@ -193,22 +201,26 @@ void Idealizer::filterApplicableRulesByConsequence(SToken& token) {
     }
 }
 
-double Idealizer::computeGammaChangeFromFilteredRules()
+double Idealizer::computeGammaChangeFromFilteredRules(bool reverse_belong)
 {
     double gamma_change = 0;
     for (RuleLink * rule : applicable_rules)
     {
-        gamma_change += getRuleVValue(rule);
+        gamma_change += getRuleVValue(rule, reverse_belong);
     }
     return gamma_change;
 }
 
-double Idealizer::getRuleVValue(RuleLink * rule) {
+double Idealizer::getRuleVValue(RuleLink * rule, bool reverse_belong) {
     SToken current_token;
     current_token.nPos = rule->getTTPos();
     current_token.nValue = rule->getTTValue();
 
-    bool is_belong = !ideal_object.isBelong(&current_token);
+    bool is_belong = ideal_object.isBelong(&current_token);
+    if (reverse_belong) {
+        is_belong = !is_belong;
+    }
+
     bool is_positive = rule->getTTSign() > 0;
     double cp_value = rule->getCP();
 
@@ -235,34 +247,311 @@ double Idealizer::getRuleVValue(RuleLink * rule) {
 }
 
 
-void Idealizer::filterApplicableRulesByPremise(SToken& token)
+void Idealizer::filterRulesBrokenWithDelition(SToken& token)
 {
+    filtered_rules.resize(0);
+
     for (RuleLink * rule : applicable_rules)
     {
-       long rule_length = rule->getRuleLength();
-       bool isOld = false;
-       for (long l=0; l < rule_length; l++)
-       {
+        long rule_length = rule->getRuleLength();
+        for (long l=0; l < rule_length; l++)
+        {
            SToken current_predicate;
-           current_predicate.nPos = *rule[l].Shift;
-           current_predicate.nValue = *rule[l].Value;
-           current_predicate.Sign = *rule[l].Sign;
+           current_predicate.nPos = (*rule)[l].Shift;
+           current_predicate.nValue = (*rule)[l].Value;
+           current_predicate.Sign = (*rule)[l].Sign;
 
-            if ( (current_predicate.Sign > 0 ) && (current_predicate.nPos == token->nPos ) && (current_predicate.nValue == token->nValue) )
+            if ((current_predicate.Sign > 0 ) &&
+                (current_predicate.nPos == token.nPos ) &&
+                (current_predicate.nValue == token.nValue))
             {
-                isOld = true;
-            }
-            // проверим, удаляем ли мы последнее значение (stok) для признака
-            // если удалили, то любой другой на его месте будет одинок
-            if ( IsAlone(&current_predicate) && (current_predicate.Sign < 0 ) && (current_predicate.nPos == token->nPos ) && (current_predicate.nValue != token->nValue) )
-            {
-                isOld = true;
+                filtered_rules.push_back(rule);
+                break;
             }
 
-       }
-       if ( isOld )
+            /* If we deleted the last value in attribute
+             * and the is part of rule that negates of any value
+             * in the attribute - that rule not appplies
+             * REWRITE THIS!
+             */
+
+            if ( isAlone(current_predicate) &&
+                 (current_predicate.Sign < 0 ) &&
+                 (current_predicate.nPos == token.nPos ) &&
+                 (current_predicate.nValue != token.nValue) )
+            {
+                filtered_rules.push_back(rule);
+                break;
+            }
+        }
+    }
+}
+
+void Idealizer::filterNewApplicableRulesAfterDelition(SToken& token)
+{
+    filtered_rules.resize(0);
+    for (RuleLink rule : rules)
+    {
+       SToken current_token;
+       int rule_length = rule.getRuleLength();
+       bool is_new = false;
+       bool is_applicable = true;
+       long l = 0;
+
+       while (is_applicable && (l < rule_length))
        {
-            filtered_rules.push_back(rule);
+            current_token.nPos = rule[l].Shift;
+            current_token.nValue = rule[l].Value;
+            current_token.Sign = rule[l].Sign;
+            l++;
+
+            if  (current_token.Sign > 0 )
+            {
+                if (!ideal_object.isBelong(&current_token)) {
+                    is_applicable = false;
+                }
+
+                if ((current_token.nPos == token.nPos) &&
+                    (current_token.nValue != token.nValue)) {
+                    is_new = true;
+                }
+            }
+
+            else if (current_token.Sign < 0)
+            {
+                if ((current_token.nPos == token.nPos) &&
+                    (current_token.nValue == token.nValue)) {
+                    is_new = true;
+                }
+
+                if (ideal_object.isBelong(&current_token)) {
+                    is_applicable = false;
+                    break;
+                }
+
+                is_applicable = false;
+                if (!isAlone(current_token)) {
+                    is_applicable = true;
+                }
+            }
+       }
+
+       if (is_new && is_applicable) {
+            filtered_rules.push_back(&rule);
        }
     }
 }
+
+bool Idealizer::isAlone(SToken & token)
+{
+    SToken send_token;
+
+    send_token.nPos = token.nPos;
+    for (send_token.nValue = 0; send_token.nValue < train_storage.getCodesCount(); send_token.nValue++)
+    {
+        if ((ideal_object.isBelong(&send_token)) &&
+            (send_token.nValue != token.nValue))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+double Idealizer::includeTest(SToken &token)
+{
+    double gamma_change = 0.;
+    ideal_object.IncludeT(IncludeToken);
+    gamma_change = computeIncludeGammaChange(IncludeToken);
+    ideal_object.ExcludeT(IncludeToken);
+    return gamma_change;
+}
+
+double Idealizer::computeIncludeGammaChange(SToken &token)
+{
+    double S1, S2, S3;
+
+    filterApplicableRulesByConsequence(token);
+    S1 = -2. * computeGammaChangeFromFilteredRules(true);
+
+    filterNewApplicableRulesAfterInsert(token);
+    S2 = computeGammaChangeFromFilteredRules(false);
+
+    filterBrokenRulesAfterInsert(TToken);
+    S3 = -1. * computeGammaChangeFromFilteredRules(false);
+    return (S1 + S2 + S3);
+}
+
+void Idealizer::filterNewApplicableRulesAfterInsert(SToken &token)
+{
+    bool is_token_alone = isAlone(token);
+    filtered_rules.resize(0);
+
+    for (RuleLink rule : rules)
+    {
+        SToken current_token;
+        long rule_length = rule.getRuleLength();
+        bool is_new = false;
+        bool is_applicable = true;
+        long l = 0;
+
+        /* make a method for filterint applicable rules7
+         * use here and in filterApplicableRules(); function
+         */
+        while (is_applicable && (l < rule_length)) {
+            current_token.nPos = rule[l].Shift;
+            current_token.nValue = rule[l].Value;
+            current_token.Sign = rule[l].Sign;
+            l++;
+
+            if (current_token.Sign > 0) {
+                if ((current_token.nPos == token->nPos ) && (current_token.nValue == token->nValue)) {
+                        is_new = true;
+                }
+                if(!ideal_object.isBelong(&current_token)) {
+                        is_applicable = false;
+                }
+            }
+            else if (current_token.Sign < 0) {
+                if  (ideal_object.isBelong(&current_token)) {
+                        is_applicable = false;
+                        break;
+                }
+
+                if (is_token_alone) {
+                    is_applicable = true;
+                    if ((current_token.nPos == token->nPos ) && (current_token.nValue != token->nValue)) {
+                        is_new = true;
+                    }
+                }
+                else {
+                    is_applicable = false;
+                }
+            }
+        }
+
+        if ((is_new) && (is_applicable)) {
+            filtered_rules.push_back(&rule);
+        }
+    }
+}
+
+void MyClassificator::filterBrokenRulesAfterInsert(SToken &token)
+{
+    filtered_rules.resize(0);
+
+    for (RuleLink * rule : applicable_rules)
+    {
+        long rule_length;
+        bool is_old;
+        rule_length = rule->getRuleLength();
+        is_old = false;
+        for (long l = 0; l < rule_length; l++)
+        {
+            SToken current_predicate;
+            current_predicate.nPos = (*rule)[l].Shift;
+            current_predicate.nValue = (*rule)[l].Value;
+            current_predicate.Sign = (*rule)[l].Sign;
+
+            if ((current_predicate.Sign < 0 ) &&
+                (current_predicate.nPos == token.nPos ) &&
+                (current_predicate.nValue == token.nValue)) {
+                is_old = true;
+            }
+            else if ((current_predicate.Sign > 0 ) &&
+                     (current_predicate.nPos == token.nPos ) &&
+                     (current_predicate.nValue != token.nValue)) {
+                is_old = true;
+            }
+        }
+        if (is_old)
+        {
+            filtered_rules.push_back(rule);
+        }
+    }
+}
+
+bool Idealizer::tryApplyBestModification()
+{
+    double max_gamma_insert = 0, max_gamma_deletion = 0;
+    bool is_extremum = true;
+
+    auto max_ex = negative_modifications.rbegin();
+    auto max_in = positive_modifications.rbegin();
+
+    if( !negative_modifications.empty() )
+        max_gamma_deletion = (*max_ex).first;
+    if( !positive_modifications.empty() )
+        max_gamma_insert = (*max_in).first;
+
+    auto i1 = negative_modifications.equal_range(max_gamma_deletion);
+    auto i2 = positive_modifications.equal_range(max_gamma_insert);
+
+
+    // Possible cycle here!
+    if ( max_gamma_insert < max_gamma_deletion )
+    {
+        is_extremum = false;
+        for(auto j = i1.first; j != i1.second; j++)
+        {
+            ideal_object.ExcludeT(&(*j).second);
+        }
+
+        ideal_object.setGamma(ideal_object.getGamma() + max_gamma_deletion);
+    }
+    else if ( max_gamma_insert > 0. && max_gamma_insert == max_gamma_deletion )
+    {
+        is_extremum = false;
+
+        for(GI j = i1.first; j != i1.second; j++)
+        {
+            ideal_object->ExcludeT(&(*j).second);
+        }
+
+        for(GI j = i2.first; j != i2.second; j++)
+        {
+            ideal_object.IncludeT(&(*j).second);
+        }
+
+        ideal_object.setGamma(ideal_object.getGamma() + max_gamma_insert);
+    }
+    else if ( max_gamma_insert > 0. )
+    {
+        is_extremum = false;
+
+        for(GI j = i2.first; j != i2.second; j++)
+        {
+            ideal_object.IncludeT(&(*j).second);
+        }
+
+        ideal_object.setGamma(ideal_object.getGamma() + max_gamma_insert);
+    }
+
+    filterApplicableRules();
+
+    return is_extremum;
+}
+
+void Idealizer::deleteZeroFeatures()
+{
+    SToken current_token;
+    double dCurrGammaIncrease;
+
+    for (current_token.nPos = 0; current_token.nPos < train_storage.getWidth(); current_token.nPos++)
+    {
+        for (current_token.nValue = 0; current_token.nValue < train_storage.getCodesCount(); current_token.nValue++)
+        {
+            if (ideal_object.isBelong(current_token))
+            {
+                dCurrGammaIncrease = computeExcludeGammaChange(current_token);
+                if (fabs(dCurrGammaIncrease) == double(0))
+                {
+                    ideal_object.ExcludeT(&current_token);
+                }
+            }
+        }
+    }
+
+    delete current_token;
+}
+

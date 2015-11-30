@@ -58,13 +58,17 @@ private:
 
     void computeModificationsImpact();
     bool isApplicableRuleConsequence(SToken token);
+    bool isAlone(SToken & token);
 
-    double getRuleVValue(RuleLink * rule);
+    double getRuleVValue(RuleLink * rule, bool reverse_belong = false);
 
     double excludeTest(SToken &token);
     double computeExcludeGammaChange(SToken& token);
     void filterApplicableRulesByConsequence(SToken &token);
-    double computeGammaChangeFromFilteredRules();
+    void filterRulesBrokenWithDelition(SToken &token);
+    void filterNewApplicableRulesAfterDelition(SToken &token);
+
+    double computeGammaChangeFromFilteredRules(bool reverse_belong = false);
 };
 
 #endif // IDEALIZER_H
