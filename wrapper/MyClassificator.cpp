@@ -76,7 +76,6 @@ bool MyClassificator::Create(SEQStorage* pSeqStorage,
                            RulesStorage* pRulesStorage,
                            CIdelObject** ObjsStorage)
 {
-    std::cout << "lla" << std::endl;
 	if ( pSeqStorage == NULL )
 	{
 		return false;
