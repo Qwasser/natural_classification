@@ -1,4 +1,4 @@
-#include "ruleparser.h"
+#include "wrapper/ruleparser.h"
 
 std::vector<RuleSection> RuleParser::getRuleSections(std::string rule_string)
 {

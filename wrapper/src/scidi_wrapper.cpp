@@ -11,13 +11,11 @@
 #include "SEQStorage.h"
 #include "Sequence.h"
 #include "NaiveGenerator.h"
-#include "MyClassificator.h"
 #include "Tunnels.h"
 #include "Thread.h"
 #include "Callback.h"
 
-#include "scidi_wrapper.h"
-#include "sdrulegenerator.h"
+#include "wrapper/scidi_wrapper.h"
 
 SEQStorage * ScidiWrapper::makeDataStorage(const std::vector<std::vector<std::string> > & input_data) {
     Sequence * storage = new Sequence [input_data.size()];
@@ -137,97 +135,6 @@ std::vector<double> ScidiWrapper::getCP() {
     return cp_values;
 }
 
-int ScidiWrapper::makeClasses(SEQStorage * storage, CIdelObject ** id_storage) {
-    ClassificatorSettings settings = {
-        /* .IdealizType= */ __IDEALIZTYPE_OFFICIAL_,
-        /* .ObjsSource= */ __IDEALSOURCE_ORIGINOBJS_
-        /* .nRecClass= */
-        /* .RecSourcePos= */
-        /* .RecSourceNeg= */
-    };
-
-    MyClassificator clf;
-
-    storage->ClearClasses();
-    clf.Create(storage, rule_storage, id_storage);
-
-    clf.lObjsStorageCounter = 0;
-    clf.SetSource(settings.ObjsSource);
-    clf.SetType(settings.IdealizType);
-
-    clf.GenClasses();
-
-    return clf.GetOutputSize();
-}
-
-void ScidiWrapper::makeClasses() {
-    ideal_storage = new CIdelObject*[ data->getLength() ];
-    ideal_storage_size = makeClasses(data, ideal_storage);
-}
-
-std::vector<std::vector<std::string> > ScidiWrapper::getIdealsFromNewData(const std::vector<std::vector<std::string> > & new_data) {
-    SEQStorage * new_storage = makeDataStorage(new_data);
-
-    CIdelObject** new_ideal_storage = new CIdelObject*[ new_storage->getLength() ];
-    int new_ideal_storage_size = makeClasses(new_storage, new_ideal_storage);
-
-    std::vector<std::vector<std::string> > ideals = getIdealObjects(new_storage,
-                                                                    new_ideal_storage,
-                                                                    new_ideal_storage_size);
-
-    delete new_storage;
-    delete new_ideal_storage;
-    return ideals;
-}
-
-std::vector<int> ScidiWrapper::getClasses() {
-    std::vector<int> classes(data->getLength());
-    for (size_t i = 0; i < data->getLength(); ++i) {
-        classes[i] = data->getClass(i);
-    }
-    return classes;
-}
-
-std::vector<std::vector<std::string> > ScidiWrapper::getIdealObjects(SEQStorage * storage,
-                                                                     CIdelObject ** i_storage,
-                                                                     int i_storage_size) {
-    std::vector<std::vector<std::string> > ideals;
-
-    for (size_t class_id = 0; class_id < i_storage_size; ++class_id) {
-
-        CIdelObject* o = i_storage[class_id];
-
-        std::vector<std::string> current_ideal;
-
-        for (auto l = 0; l < storage->getWidth(); ++l)
-        {
-            std::vector<std::string> possible_values;
-
-            for (auto c = 0; c < storage->getCodesCount(); ++c) {
-                if (o->isBelong(l, c))
-                {
-                    std::string v(storage->Decode(c));
-                    possible_values.push_back(v);
-                }
-            }
-
-            std::stringstream s;
-            const char * sep = "|";
-            copy(possible_values.begin(),
-                 possible_values.end(),
-                 std::ostream_iterator<std::string>(s, sep));
-
-            current_ideal.push_back(s.str());
-        }
-
-        ideals.push_back(current_ideal);
-    }
-    return ideals;
-}
-
-std::vector<std::vector<std::string> > ScidiWrapper::getIdealObjects() {
-    return getIdealObjects(data, ideal_storage, ideal_storage_size);
-}
 
 void ScidiWrapper::addRuleFromString(std::string rule_str) {
     Rule * rule = parseRule(rule_str);
@@ -241,20 +148,20 @@ Rule * ScidiWrapper::parseRule(std::string rule_str) {
     return rule_storage->ConvertFromLinkToRule(rule_link);
 }
 
-void ScidiWrapper::makeRulesWithSDGenerator(unsigned int full_depth,
-                                            double fisher,
-                                            unsigned int yule_freq,
-                                            double yule_critlvl) {
-    SdRuleGenerator gen(*(data));
-    std::list<RuleLink *> rule_links = gen.generateAllRules(full_depth,
-                                                              fisher,
-                                                              yule_freq,
-                                                              yule_critlvl);
-    intitRuleStorage();
-    for (RuleLink * link_ptr : rule_links) {
-        Rule * rule = rule_storage->ConvertFromLinkToRule(link_ptr);
-        rule->Probability(data);
-        rule_storage->Add(rule);
-    }
-    rule_storage->MakePointersArray();
-}
+//void ScidiWrapper::makeRulesWithSDGenerator(unsigned int full_depth,
+//                                            double fisher,
+//                                            unsigned int yule_freq,
+//                                            double yule_critlvl) {
+//    SdRuleGenerator gen(*(data));
+//    std::list<RuleLink *> rule_links = gen.generateAllRules(full_depth,
+//                                                              fisher,
+//                                                              yule_freq,
+//                                                              yule_critlvl);
+//    intitRuleStorage();
+//    for (RuleLink * link_ptr : rule_links) {
+//        Rule * rule = rule_storage->ConvertFromLinkToRule(link_ptr);
+//        rule->Probability(data);
+//        rule_storage->Add(rule);
+//    }
+//    rule_storage->MakePointersArray();
+//}

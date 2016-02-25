@@ -7,7 +7,6 @@
 #include "RulesStorage.h"
 #include "Tunnels.h"
 #include "CIdelObject.h"
-#include "MyClassificator.h"
 
 #include "ruleparser.h"
 
@@ -29,10 +28,10 @@ public:
     std::vector<double> getYule();
     std::vector<double> getCP();
 
-    void makeRulesWithSDGenerator(unsigned int full_depth,
-                                  double fisher,
-                                  unsigned int yule_freq,
-                                  double yule_critlvl);
+//    void makeRulesWithSDGenerator(unsigned int full_depth,
+//                                  double fisher,
+//                                  unsigned int yule_freq,
+//                                  double yule_critlvl);
 
     void setRulesFromStringVector(std::vector<std::string> rule_strings) {
         intitRuleStorage();

@@ -1,6 +1,6 @@
 %module scidi_wrapper
 %{
-#include "scidi_wrapper.h"
+#include "wrapper/scidi_wrapper.h"
 %}
 
 %include "std_vector.i"
@@ -15,4 +15,4 @@ namespace std {
 }
 
 // Include the header file with above prototypes
-%include "scidi_wrapper.h"
+%include "wrapper/scidi_wrapper.h"
