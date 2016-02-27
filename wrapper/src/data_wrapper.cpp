@@ -1,4 +1,6 @@
 #include <cassert>
+#include <stdexcept>
+
 #include "wrapper/data_wrapper.h"
 
 DataWrapper::DataWrapper (const std::vector<std::vector<std::string>> & data) {
@@ -60,6 +62,14 @@ size_t DataWrapper::size() {
 
 size_t DataWrapper::getWidth() {
     return storage->getWidth();
+}
+
+std::string DataWrapper::decodeValueId(size_t value_id) {
+    if (value_id >= getCodesCount()) {
+        throw std::out_of_range("Value id is out of range!");
+    }
+
+    return std::string(storage->Decode(value_id));
 }
 
 SEQStorage * DataWrapper::getStoragePointer() {

@@ -6,6 +6,7 @@
 #include <wrapper/sdrulegenerator.h>
 #include <wrapper/data_wrapper.h>
 #include <wrapper/rules_wrapper.h>
+#include <wrapper/ideal_object_wrapper.h>
 
 #include "gtest/gtest.h"
 
@@ -128,6 +129,16 @@ TEST(RulesWrapperTests, RuleParseTest) {
     for (size_t i = 0; i < rule_strings.size(); ++i) {
         ASSERT_TRUE (rules[i] == rule_strings[i]);
     }
+}
+
+TEST(IdealWrapperTests, GetMatrixTest) {
+    std::vector<std::vector<std::string> > test_data = makeTestInput();
+    DataWrapper data_wrapper(test_data);
+
+    IdealObjectWrapper ideal(data_wrapper.getObjectByIndex(0),
+                             data_wrapper.getCodesCount());
+
+    std::vector<std::vector<bool>> ideal_matrix = ideal.asBooleanMatrix(data_wrapper);
 }
 
 

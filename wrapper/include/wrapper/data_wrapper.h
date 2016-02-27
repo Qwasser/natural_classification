@@ -10,6 +10,11 @@ class ObjectWrapper {
 public:
     ObjectWrapper(SEQSElem obj) : obj(obj) {}
     ObjectWrapper(ObjectWrapper const & other) : obj(other.obj) {}
+
+    SEQSElem getObj() {
+        return obj;
+    }
+
 private:
     SEQSElem obj;
 };
@@ -26,6 +31,8 @@ public:
     size_t getCodesCount();
     size_t size();
     size_t getWidth();
+
+    std::string decodeValueId(size_t value_id);
 
     SEQStorage * getStoragePointer();
 private:
