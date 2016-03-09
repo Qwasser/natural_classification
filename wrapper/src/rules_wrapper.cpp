@@ -16,6 +16,18 @@ RulesWrapper::RulesWrapper(std::vector<std::string> text_rules, DataWrapper data
     storage->MakePointersArray();
 }
 
+RulesWrapper::RulesWrapper(std::vector<RuleLink *> rules, DataWrapper data) : data(data) {
+    storage.reset(new RulesStorage(data.getWidth() , data.getCodesCount()));
+
+    for (RuleLink * rule_link : rules) {
+        Rule * rule = storage->ConvertFromLinkToRule(rule_link);
+        rule->Probability(data.getStoragePointer());
+        storage->Add(rule);
+    }
+    
+    storage->MakePointersArray();
+}
+
 
 void RulesWrapper::addRuleFromString(std::string rule_str) {
     Rule * rule = parseRule(rule_str);

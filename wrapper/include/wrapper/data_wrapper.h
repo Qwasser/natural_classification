@@ -21,9 +21,9 @@ private:
 
 class DataWrapper {
 public:
-    DataWrapper (const std::vector<std::vector<std::string>> & data);
+    DataWrapper (const std::vector< std::vector<std::string> > & data);
 
-    std::vector<std::vector<std::string>> asStringMatrix();
+    std::vector<std::vector<std::string> > asStringMatrix();
     std::vector<std::string> getObjectAsStrinVector(size_t index);
 
     ObjectWrapper getObjectByIndex(size_t index);

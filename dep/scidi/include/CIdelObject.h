@@ -53,7 +53,7 @@ public:
 	void Minimize();
 
 	std::list<short> RulMarks;
-	bool getObjAsVector(bool** b, int len, int code);
+	bool** getObjAsVector(int len, int code);
 
 private:
 	bool** IdelObject;

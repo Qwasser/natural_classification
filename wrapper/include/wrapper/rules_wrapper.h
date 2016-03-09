@@ -11,6 +11,7 @@
 class RulesWrapper {
 public:
   RulesWrapper(std::vector<std::string> text_rules, DataWrapper data);
+  RulesWrapper(std::vector<RuleLink *> rule_links, DataWrapper data);
   RulesWrapper(double conf_int_value, double yule_value, double min_cp, size_t depth, DataWrapper data);
 
   std::vector<double> getFisher();

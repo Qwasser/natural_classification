@@ -14,9 +14,9 @@ std::vector<std::vector<bool>> IdealObjectWrapper::asBooleanMatrix(DataWrapper d
     std::vector<std::vector<bool>> result_matrix(width,
                                                  std::vector<bool>(codes_count, false));
 
-    bool ** ideal_ptr = nullptr;
+    bool ** ideal_ptr = object.getObjAsVector(width, codes_count);
 
-    if (! object.getObjAsVector(&ideal_ptr, width, codes_count)) {
+    if (!ideal_ptr) {
        throw std::out_of_range("Wrong metadata!");
     }
 

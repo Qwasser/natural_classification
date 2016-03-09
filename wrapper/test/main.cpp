@@ -3,12 +3,13 @@
 #include <string>
 #include <iostream>
 
+#include "gtest/gtest.h"
+
 #include <wrapper/sdrulegenerator.h>
 #include <wrapper/data_wrapper.h>
 #include <wrapper/rules_wrapper.h>
 #include <wrapper/ideal_object_wrapper.h>
-
-#include "gtest/gtest.h"
+#include <wrapper/object_idealizer.h>
 
 std::vector<std::vector<std::string> > makeTestInput() {
     std::vector<std::vector<std::string> > test_input;
@@ -51,6 +52,44 @@ std::vector<std::vector<std::string> > makeTestInput() {
     return test_input;
 }
 
+std::vector<std::string> getTestRuleStrings() {
+    std::vector<std::string> rule_strings;
+
+    rule_strings.push_back("4= not c => 3=b");
+    rule_strings.push_back("4=d => 3=b");
+    rule_strings.push_back("5= not a => 3=b");
+    rule_strings.push_back("5=d => 3=b");
+    rule_strings.push_back("4=c => 3=c");
+    rule_strings.push_back("5=a => 3=c");
+    rule_strings.push_back("5= not d => 3=c");
+    rule_strings.push_back("4=c => 3= not b");
+    rule_strings.push_back("4= not d => 3= not b");
+    rule_strings.push_back("5=a => 3= not b");
+    rule_strings.push_back("5= not d => 3= not b");
+    rule_strings.push_back("4= not c => 3= not c");
+    rule_strings.push_back("4=d => 3= not c");
+    rule_strings.push_back("5= not a => 3= not c");
+    rule_strings.push_back("5=d => 3= not c");
+    rule_strings.push_back("3= not b => 4=c");
+    rule_strings.push_back("3=c => 4=c");
+    rule_strings.push_back("5=a => 4=c");
+    rule_strings.push_back("5= not d => 4=c");
+    rule_strings.push_back("3=b => 4=d");
+    rule_strings.push_back("3= not c => 4=d");
+    rule_strings.push_back("5= not a => 4=d");
+    rule_strings.push_back("5=d => 4=d");
+    rule_strings.push_back("3=b => 4= not c");
+    rule_strings.push_back("3= not c => 4= not c");
+    rule_strings.push_back("5= not a => 4= not c");
+    rule_strings.push_back("5=d => 4= not c");
+    rule_strings.push_back("3= not b => 4= not d");
+    rule_strings.push_back("3=c => 4= not d");
+    rule_strings.push_back("5=a => 4= not d");
+    rule_strings.push_back("5= not d => 4= not d");
+
+    return rule_strings;
+}
+
 TEST(ScidiTest, LinkageTest) {
     Sequence test_sequence("test_sequence");
 }
@@ -89,43 +128,35 @@ TEST(RulesWrapperTests, RuleParseTest) {
     std::vector<std::vector<std::string> > test_data = makeTestInput();
     DataWrapper data_wrapper(test_data);
 
-    std::vector<std::string> rule_strings;
-
-    rule_strings.push_back("4= not c => 3=b");
-    rule_strings.push_back("4=d => 3=b");
-    rule_strings.push_back("5= not a => 3=b");
-    rule_strings.push_back("5=d => 3=b");
-    rule_strings.push_back("4=c => 3=c");
-    rule_strings.push_back("5=a => 3=c");
-    rule_strings.push_back("5= not d => 3=c");
-    rule_strings.push_back("4=c => 3= not b");
-    rule_strings.push_back("4= not d => 3= not b");
-    rule_strings.push_back("5=a => 3= not b");
-    rule_strings.push_back("5= not d => 3= not b");
-    rule_strings.push_back("4= not c => 3= not c");
-    rule_strings.push_back("4=d => 3= not c");
-    rule_strings.push_back("5= not a => 3= not c");
-    rule_strings.push_back("5=d => 3= not c");
-    rule_strings.push_back("3= not b => 4=c");
-    rule_strings.push_back("3=c => 4=c");
-    rule_strings.push_back("5=a => 4=c");
-    rule_strings.push_back("5= not d => 4=c");
-    rule_strings.push_back("3=b => 4=d");
-    rule_strings.push_back("3= not c => 4=d");
-    rule_strings.push_back("5= not a => 4=d");
-    rule_strings.push_back("5=d => 4=d");
-    rule_strings.push_back("3=b => 4= not c");
-    rule_strings.push_back("3= not c => 4= not c");
-    rule_strings.push_back("5= not a => 4= not c");
-    rule_strings.push_back("5=d => 4= not c");
-    rule_strings.push_back("3= not b => 4= not d");
-    rule_strings.push_back("3=c => 4= not d");
-    rule_strings.push_back("5=a => 4= not d");
-    rule_strings.push_back("5= not d => 4= not d");
+    std::vector<std::string> rule_strings = getTestRuleStrings();
 
     RulesWrapper rules_wrapper(rule_strings, data_wrapper);
 
     std::vector<std::string> rules = rules_wrapper.asStringVectors();
+    for (size_t i = 0; i < rule_strings.size(); ++i) {
+        ASSERT_TRUE (rules[i] == rule_strings[i]);
+    }
+}
+
+TEST(RulesWrapperTests, RuleLinkConstructor) {
+    std::vector<std::vector<std::string> > test_data = makeTestInput();
+    DataWrapper data_wrapper(test_data);
+
+    std::vector<std::string> rule_strings = getTestRuleStrings();
+    RulesWrapper rules_wrapper(rule_strings, data_wrapper);
+
+    std::vector<RuleLink *> links;
+    RulesStorage * storage_ptr = rules_wrapper.getStoragePointer();
+    for (ruleID rules_iterator = storage_ptr->begin();
+         rules_iterator != storage_ptr->end();
+         ++rules_iterator)
+    {
+        links.push_back(&(*rules_iterator));
+    }
+
+    RulesWrapper rules_wrapper_2(links, data_wrapper);
+
+    std::vector<std::string> rules = rules_wrapper_2.asStringVectors();
     for (size_t i = 0; i < rule_strings.size(); ++i) {
         ASSERT_TRUE (rules[i] == rule_strings[i]);
     }
@@ -139,6 +170,23 @@ TEST(IdealWrapperTests, GetMatrixTest) {
                              data_wrapper.getCodesCount());
 
     std::vector<std::vector<bool>> ideal_matrix = ideal.asBooleanMatrix(data_wrapper);
+
+    std::vector<std::string> desired_values = {"b", "c", "a", "d"};
+    std::vector<std::string> values = ideal.idToValueVector(data_wrapper);
+
+    ASSERT_TRUE (desired_values == values);
+}
+
+TEST(ObjectIdealizerTests, InitializationTest) {
+    std::vector<std::vector<std::string> > test_data = makeTestInput();
+    DataWrapper data_wrapper(test_data);
+
+    std::vector<std::string> rule_strings = getTestRuleStrings();
+    RulesWrapper rules_wrapper(rule_strings, data_wrapper);
+
+    ObjectIdealizer idealizer(data_wrapper.getObjectByIndex(0),
+                              rules_wrapper,
+                              data_wrapper);
 }
 
 

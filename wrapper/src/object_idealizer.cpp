@@ -3,17 +3,20 @@
 #include <cmath>
 #include <map>
 
-ObjectIdealizer::ObjectIdealizer(SEQSElem & object,
-                                 RulesStorage & rules,
-                                 size_t codes_count,
+ObjectIdealizer::ObjectIdealizer(ObjectWrapper object,
+                                 RulesWrapper rules,
+                                 DataWrapper data,
                                  bool strong_negation,
-                                 TieBreakingAction action) : codes_count(codes_count),
+                                 TieBreakingAction action) : data(data),
                                                              strong_negation(strong_negation),
                                                              action(action),
                                                              initial_rules(rules)
 
 {
-
+    SEQSElem obj = object.getObj();
+    ideal_object.Create(&obj, data.getCodesCount());
+    
+    splitRulesByApplicability();
 }
 
 bool ObjectIdealizer::isPredicateApplicable(SToken & predicate) {
@@ -26,7 +29,7 @@ bool ObjectIdealizer::isPredicateApplicable(SToken & predicate) {
             SToken probe_predicate;
             probe_predicate.nPos = predicate.nPos;
 
-            for (probe_predicate.nValue = 0; probe_predicate.nValue < codes_count; probe_predicate.nValue++)
+            for (probe_predicate.nValue = 0; probe_predicate.nValue < data.getCodesCount(); probe_predicate.nValue++)
             {
                 if ((ideal_object.isBelong(&probe_predicate)) &&
                     (probe_predicate.nValue != predicate.nValue))
@@ -125,19 +128,23 @@ void ObjectIdealizer::splitRulesByApplicability() {
     not_applicable_rules.resize(0);
     app_rules_consequence_applicable.resize(0);
 
-    for (RuleLink rule : initial_rules)
-    {
-        if (isRuleApplicable(rule)) {
-            applicable_rules.push_back(&rule);
+    RulesStorage * storage_ptr = initial_rules.getStoragePointer();
+    for (ruleID rules_iterator = storage_ptr->begin();
+         rules_iterator != storage_ptr->end();
+         ++rules_iterator) {
+        RuleLink * rule = &(*rules_iterator);
 
-            SToken consequence = getConsequence(rule);
+        if (isRuleApplicable(*rule)) {
+            applicable_rules.push_back(rule);
+
+            SToken consequence = getConsequence(*rule);
             if (isPredicateApplicable(consequence)) {
                 app_rules_consequence_applicable.push_back(true);
             } else {
                 app_rules_consequence_applicable.push_back(false);
             }
         } else {
-            not_applicable_rules.push_back(&rule);
+            not_applicable_rules.push_back(rule);
         }
     }
 }
@@ -158,9 +165,9 @@ bool ObjectIdealizer::idealizationStep() {
     SToken best_insertion_token;
 
     SToken current_token;
-    for (current_token.nPos = 0; current_token.nPos < attribute_count; ++current_token.nPos)
+    for (current_token.nPos = 0; current_token.nPos < data.getWidth(); ++current_token.nPos)
     {
-        for (current_token.nValue = 0; current_token.nValue < codes_count; ++current_token.nValue)
+        for (current_token.nValue = 0; current_token.nValue < data.getCodesCount(); ++current_token.nValue)
         {
             double gamma_change = computeGammaChangeOnAction(current_token.nPos,
                                                       current_token.nValue);
@@ -201,4 +208,8 @@ bool ObjectIdealizer::idealizationStep() {
     splitRulesByApplicability();
 
     return gamma_maximum_reached;
+}
+
+void ObjectIdealizer::idealizeToMaximumGamma() {
+    while(idealizationStep()) {};
 }

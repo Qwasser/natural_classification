@@ -3,7 +3,7 @@
 
 #include "wrapper/data_wrapper.h"
 
-DataWrapper::DataWrapper (const std::vector<std::vector<std::string>> & data) {
+DataWrapper::DataWrapper (const std::vector<std::vector<std::string> > &data) {
     Sequence * temp_storage = new Sequence [data.size()];
     for (size_t i = 0; i < data.size(); ++i) {
         temp_storage[i] = Sequence();
@@ -44,7 +44,6 @@ std::vector<std::string> DataWrapper::getObjectAsStrinVector(size_t index) {
 
     return result;
 }
-
 
 ObjectWrapper DataWrapper::getObjectByIndex (size_t index) {
     SEQSElem elem(storage->getWidth());

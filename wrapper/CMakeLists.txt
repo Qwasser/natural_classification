@@ -35,20 +35,18 @@ target_link_libraries(${PROJECT_TEST_NAME}
                                       )
 add_test(test ${PROJECT_TEST_NAME})
 
-# Swig wrapper
+
 FIND_PACKAGE(SWIG REQUIRED)
 INCLUDE(${SWIG_USE_FILE})
 
-FIND_PACKAGE(PythonLibs)
-INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+FIND_PACKAGE(PythonLibs 2.7.9 EXACT REQUIRED)
 
+INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 INCLUDE_DIRECTORIES(${WRAPPER_INCLUDES})
 
 SET(CMAKE_SWIG_FLAGS "")
 
-SET_SOURCE_FILES_PROPERTIES(swig/scidi_wrapper.i PROPERTIES CPLUSPLUS ON)
-SWIG_ADD_MODULE(scidi_wrapper python swig/scidi_wrapper.i ${SOURCES})
-SWIG_LINK_LIBRARIES(scidi_wrapper scidi.a
-                                  ${PYTHON_LIBRARIES})
+SET_SOURCE_FILES_PROPERTIES(swig/wrapper.i PROPERTIES CPLUSPLUS ON)
+SWIG_ADD_MODULE(wrapper python swig/wrapper.i ${SOURCES})
 
-
+SWIG_LINK_LIBRARIES(wrapper scidi.a ${PYTHON_LIBRARIES})
