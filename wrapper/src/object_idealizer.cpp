@@ -17,6 +17,10 @@ ObjectIdealizer::ObjectIdealizer(ObjectWrapper object,
     ideal_object.Create(&obj, data.getCodesCount());
     
     splitRulesByApplicability();
+
+    for (RuleLink * rule : applicable_rules) {
+        current_gamma += computeGamma(*rule);
+    }
 }
 
 bool ObjectIdealizer::isPredicateApplicable(SToken & predicate) {
@@ -211,5 +215,5 @@ bool ObjectIdealizer::idealizationStep() {
 }
 
 void ObjectIdealizer::idealizeToMaximumGamma() {
-    while(idealizationStep()) {};
+    while(!idealizationStep()) {};
 }

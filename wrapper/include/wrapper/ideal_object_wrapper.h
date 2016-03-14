@@ -12,7 +12,7 @@ public:
 
     IdealObjectWrapper (ObjectWrapper obj, size_t values_count);
 
-    std::vector<std::vector<bool>> asBooleanMatrix(DataWrapper data);
+    std::vector< std::vector<bool> > asBooleanMatrix(DataWrapper data);
     std::vector<std::string> idToValueVector(DataWrapper data);
 
     CIdelObject getObject() {
