@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <map>
+#include <iostream>
 
 ObjectIdealizer::ObjectIdealizer(ObjectWrapper object,
                                  RulesWrapper rules,
@@ -129,6 +130,21 @@ double ObjectIdealizer::computeGammaChangeOnAction(size_t attribute, size_t valu
             broken_rules_change;
 }
 
+double ObjectIdealizer::computeGammaChangeOnActionBrute(size_t attribute, size_t value) {
+    flipFeature(attribute, value);
+
+    splitRulesByApplicability();
+
+    double new_gamma = 0;
+    for (RuleLink * rule : applicable_rules) {
+        new_gamma += computeGamma(*rule);
+    }
+
+    flipFeature(attribute, value);
+
+    return new_gamma - current_gamma;
+}
+
 void ObjectIdealizer::splitRulesByApplicability() {
     applicable_rules.resize(0);
     not_applicable_rules.resize(0);
@@ -163,26 +179,34 @@ SToken ObjectIdealizer::getConsequence(RuleLink & rule) {
     return consequence;
 }
 
-bool ObjectIdealizer::idealizationStep() {
-    double best_delition_gamma = 0;
+bool ObjectIdealizer::idealizationStep(bool brute) {
+    double best_delition_gamma = -INFINITY;
     SToken best_delition_token;
 
-    double best_insertion_gamma = 0;
+    double best_insertion_gamma = -INFINITY;
     SToken best_insertion_token;
 
     SToken current_token;
+
     for (current_token.nPos = 0; current_token.nPos < data.getWidth(); ++current_token.nPos)
     {
         for (current_token.nValue = 0; current_token.nValue < data.getCodesCount(); ++current_token.nValue)
         {
-            double gamma_change = computeGammaChangeOnAction(current_token.nPos,
+            double gamma_change;
+            if (!brute) {
+                gamma_change = computeGammaChangeOnAction(current_token.nPos,
                                                       current_token.nValue);
+            }
+            else {
+                gamma_change = computeGammaChangeOnActionBrute(current_token.nPos,
+                                                          current_token.nValue);
+            }
             if (ideal_object.isBelong(&current_token) && gamma_change > best_delition_gamma) {
                 best_delition_gamma = gamma_change;
-                best_delition_token = current_token;
+                best_delition_token = current_token;    
             } else if (!ideal_object.isBelong(&current_token) && gamma_change > best_insertion_gamma){
                 best_insertion_gamma = gamma_change;
-                best_insertion_token = current_token;
+                best_insertion_token = current_token;        
             }
         }
     }
@@ -215,7 +239,6 @@ bool ObjectIdealizer::idealizationStep() {
     }
 
     splitRulesByApplicability();
-
     return gamma_maximum_reached;
 }
 

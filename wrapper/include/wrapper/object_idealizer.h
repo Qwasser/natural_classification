@@ -23,7 +23,8 @@ public:
                     bool strong_negation=false,
                     TieBreakingAction action=remove);
 
-    bool idealizationStep();
+    bool idealizationStep(bool brute = false);
+
     void idealizeToMaximumGamma();
 
     IdealObjectWrapper getIdealObject() {
@@ -44,6 +45,10 @@ public:
 
     RulesWrapper getApplicableRules() {
         return RulesWrapper(applicable_rules, data);
+    }
+
+    RulesWrapper getNonApplicableRules() {
+        return RulesWrapper(not_applicable_rules, data);
     }
 
 private:
@@ -70,6 +75,7 @@ private:
     std::vector<RuleLink *> not_applicable_rules;
 
     double computeGammaChangeOnAction(size_t attribute, size_t value);
+    double computeGammaChangeOnActionBrute(size_t attribute, size_t value);
 
     void splitRulesByApplicability();
 

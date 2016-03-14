@@ -24,6 +24,10 @@ public:
       return storage.get();
   }
 
+  long size() {
+      return storage->getSize();
+  }
+
 private:
   std::shared_ptr<RulesStorage> storage;
   DataWrapper data;
