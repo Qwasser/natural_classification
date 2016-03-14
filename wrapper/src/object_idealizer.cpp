@@ -33,7 +33,9 @@ bool ObjectIdealizer::isPredicateApplicable(SToken & predicate) {
             SToken probe_predicate;
             probe_predicate.nPos = predicate.nPos;
 
-            for (probe_predicate.nValue = 0; probe_predicate.nValue < data.getCodesCount(); probe_predicate.nValue++)
+            for (probe_predicate.nValue = 0;
+                 probe_predicate.nValue < data.getCodesCount();
+                 probe_predicate.nValue++)
             {
                 if ((ideal_object.isBelong(&probe_predicate)) &&
                     (probe_predicate.nValue != predicate.nValue))
@@ -186,6 +188,9 @@ bool ObjectIdealizer::idealizationStep() {
     }
 
     bool gamma_maximum_reached = true;
+
+    last_deletion_gamma_change = best_delition_gamma;
+    last_insertion_gamma_change = best_insertion_gamma;
 
     if (best_delition_gamma > 0 || best_insertion_gamma > 0) {
         gamma_maximum_reached = false;

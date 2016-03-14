@@ -34,6 +34,14 @@ public:
         return current_gamma;
     }
 
+    double getLastInsertionGamma() {
+        return last_insertion_gamma_change;
+    }
+
+    double getLastDeletionGamma() {
+        return last_deletion_gamma_change;
+    }
+
     RulesWrapper getApplicableRules() {
         return RulesWrapper(applicable_rules, data);
     }
@@ -46,6 +54,8 @@ private:
 
     CIdelObject ideal_object;
     double current_gamma = 0;
+    double last_insertion_gamma_change = 0;
+    double last_deletion_gamma_change = 0;
 
     bool isPredicateApplicable(SToken & predicate);
     bool isRuleApplicable(RuleLink & rule);
