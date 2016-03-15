@@ -9,7 +9,7 @@ ObjectIdealizer::ObjectIdealizer(ObjectWrapper object,
                                  DataWrapper data,
                                  bool strong_negation,
                                  TieBreakingAction action) : data(data),
-                                                             strong_negation(strong_negation),
+                                                             strong_negation_mode(strong_negation),
                                                              action(action),
                                                              initial_rules(rules)
 
@@ -24,7 +24,7 @@ ObjectIdealizer::ObjectIdealizer(ObjectWrapper object,
     }
 }
 
-bool ObjectIdealizer::isPredicateApplicable(SToken & predicate) {
+bool ObjectIdealizer::isPredicateApplicable(SToken & predicate, bool strong_negation) {
     if (predicate.Sign >= 0) {
         return ideal_object.isBelong(&predicate);
     } else {
@@ -71,7 +71,7 @@ double ObjectIdealizer::computeGamma(RuleLink & rule) {
     double cp = rule.getCP();
 
     SToken consequence = getConsequence(rule);
-    if (isPredicateApplicable(consequence)) {
+    if (isPredicateApplicable(consequence, false)) {
         return -log(1 - cp);
     } else {
         return log(1 - cp);

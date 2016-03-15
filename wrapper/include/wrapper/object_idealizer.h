@@ -54,7 +54,7 @@ public:
 private:
     DataWrapper data;
 
-    bool strong_negation;
+    bool strong_negation_mode;
     TieBreakingAction action;
 
     CIdelObject ideal_object;
@@ -62,7 +62,7 @@ private:
     double last_insertion_gamma_change = 0;
     double last_deletion_gamma_change = 0;
 
-    bool isPredicateApplicable(SToken & predicate);
+    bool isPredicateApplicable(SToken & predicate, bool strong_negation = false);
     bool isRuleApplicable(RuleLink & rule);
     double computeGamma(RuleLink & rule);
 
