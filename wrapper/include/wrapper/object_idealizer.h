@@ -62,7 +62,7 @@ private:
     double last_insertion_gamma_change = 0;
     double last_deletion_gamma_change = 0;
 
-    bool isPredicateApplicable(SToken & predicate, bool strong_negation = false);
+    bool isPredicateApplicable(SToken & predicate);
     bool isRuleApplicable(RuleLink & rule);
     double computeGamma(RuleLink & rule);
 
