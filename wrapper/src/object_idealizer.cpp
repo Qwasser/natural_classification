@@ -29,6 +29,7 @@ bool ObjectIdealizer::isPredicateApplicable(SToken & predicate, bool strong_nega
         return ideal_object.isBelong(&predicate);
     } else {
         if (strong_negation) {
+                                std::cout << "lal" << std::endl;
             return !ideal_object.isBelong(&predicate);
         } else {
             SToken probe_predicate;
@@ -41,6 +42,7 @@ bool ObjectIdealizer::isPredicateApplicable(SToken & predicate, bool strong_nega
                 if ((ideal_object.isBelong(&probe_predicate)) &&
                     (probe_predicate.nValue != predicate.nValue))
                 {
+
                     return true;
                 }
             }
@@ -59,7 +61,7 @@ bool ObjectIdealizer::isRuleApplicable(RuleLink & rule) {
         current_token.nValue = rule[token_id].Value;
         current_token.Sign = rule[token_id].Sign;
 
-        if (!isPredicateApplicable(current_token)) {
+        if (!isPredicateApplicable(current_token, false)) {
             return false;
         }
     }
@@ -71,7 +73,7 @@ double ObjectIdealizer::computeGamma(RuleLink & rule) {
     double cp = rule.getCP();
 
     SToken consequence = getConsequence(rule);
-    if (isPredicateApplicable(consequence, false)) {
+    if (isPredicateApplicable(consequence, true)) {
         return -log(1 - cp);
     } else {
         return log(1 - cp);
@@ -160,11 +162,12 @@ void ObjectIdealizer::splitRulesByApplicability() {
             applicable_rules.push_back(rule);
 
             SToken consequence = getConsequence(*rule);
-            if (isPredicateApplicable(consequence)) {
+            if (isPredicateApplicable(consequence, true)) {
                 app_rules_consequence_applicable.push_back(true);
             } else {
                 app_rules_consequence_applicable.push_back(false);
             }
+
         } else {
             not_applicable_rules.push_back(rule);
         }

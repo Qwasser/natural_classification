@@ -53,7 +53,9 @@ RulesWrapper::RulesWrapper(double conf_int_value,
                            double yule_value,
                            double min_cp,
                            size_t depth,
-                           DataWrapper data) : data(data) {
+                           DataWrapper data,
+                           bool negate_premise,
+                           bool negate_consequence) : data(data) {
     storage.reset(new RulesStorage(data.getWidth() , data.getCodesCount()));
 
     RuleSettings current_rule_settings;
@@ -65,8 +67,8 @@ RulesWrapper::RulesWrapper(double conf_int_value,
     current_rule_settings.StartPos = 0;
     current_rule_settings.FinishPos = data.getWidth() - 1;
 
-    current_rule_settings.DeclineDecision = true;
-    current_rule_settings.DeclinePremise = true;
+    current_rule_settings.DeclineDecision = negate_premise;
+    current_rule_settings.DeclinePremise = negate_consequence;
 
     current_rule_settings.RulesContainer = storage.get();
 
