@@ -24,11 +24,31 @@ ObjectIdealizer::ObjectIdealizer(ObjectWrapper object,
     }
 }
 
-bool ObjectIdealizer::isPredicateApplicable(SToken & predicate) {
+bool ObjectIdealizer::isPredicateApplicable(SToken & predicate,
+                                            bool strong_negation,
+                                            bool strong_positive) {
     if (predicate.Sign >= 0) {
+
+        if (strong_positive) {
+            SToken probe_predicate;
+            probe_predicate.nPos = predicate.nPos;
+
+            for (probe_predicate.nValue = 0;
+                 probe_predicate.nValue < data.getCodesCount();
+                 probe_predicate.nValue++)
+            {
+                if ((ideal_object.isBelong(&probe_predicate)) &&
+                    (probe_predicate.nValue != predicate.nValue))
+                {
+
+                    return false;
+                }
+            }
+        }
+
         return ideal_object.isBelong(&predicate);
     } else {
-        if (strong_negation_mode) {
+        if (strong_negation_mode || strong_negation) {
             return !ideal_object.isBelong(&predicate);
         } else {
             SToken probe_predicate;

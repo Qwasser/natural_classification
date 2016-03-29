@@ -1,4 +1,4 @@
-#ifndef OBJECT_IDEALIZER_H
+ #ifndef OBJECT_IDEALIZER_H
 #define OBJECT_IDEALIZER_H
 
 #include <vector>
@@ -62,7 +62,10 @@ private:
     double last_insertion_gamma_change = 0;
     double last_deletion_gamma_change = 0;
 
-    bool isPredicateApplicable(SToken & predicate);
+    bool isPredicateApplicable(SToken & predicate,
+                               bool strong_negetion = false,
+                               bool strong_positive = false);
+
     bool isRuleApplicable(RuleLink & rule);
     double computeGamma(RuleLink & rule);
 

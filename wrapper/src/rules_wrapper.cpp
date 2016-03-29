@@ -67,8 +67,8 @@ RulesWrapper::RulesWrapper(double conf_int_value,
     current_rule_settings.StartPos = 0;
     current_rule_settings.FinishPos = data.getWidth() - 1;
 
-    current_rule_settings.DeclineDecision = negate_premise;
-    current_rule_settings.DeclinePremise = negate_consequence;
+    current_rule_settings.DeclineDecision = negate_consequence;
+    current_rule_settings.DeclinePremise = negate_premise;
 
     current_rule_settings.RulesContainer = storage.get();
 
