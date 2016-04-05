@@ -6,6 +6,7 @@
 
 #include <wrapper/rules_wrapper.h>
 #include <wrapper/ruleparser.h>
+#include <wrapper/scidi_logger.h>
 
 RulesWrapper::RulesWrapper(std::vector<std::string> text_rules, DataWrapper data) : data(data) {
     storage.reset(new RulesStorage(data.getWidth() , data.getCodesCount()));
@@ -72,6 +73,13 @@ RulesWrapper::RulesWrapper(double conf_int_value,
 
     current_rule_settings.RulesContainer = storage.get();
 
+    sdEvent* rule_generator_event = new sdEvent();
+
+    shared_ptr<ScidiLogger> reporter = std::make_shared<ScidiLogger>();
+
+    std::function<void(Rule*)> f1 = std::bind(&ScidiLogger::NewRegularity, reporter.get(), std::placeholders::_1);
+    rule_generator_event->connect("regularity", f1);
+
     NaiveRuleGenerator rule_generator = NaiveRuleGenerator();
     rule_generator.SetInput(data.getStoragePointer());
     rule_generator.SetSettings(current_rule_settings);
@@ -80,15 +88,14 @@ RulesWrapper::RulesWrapper(double conf_int_value,
     ThreadCommand * dummy_command = new ThreadCommand(dummy_thread);
     rule_generator.setCommand(dummy_command);
 
-    sdEvent * dummy_event = new sdEvent();
-    rule_generator.setCallback(dummy_event);
+    rule_generator.setCallback(rule_generator_event);
 
     dummy_thread->start();
     rule_generator.GenRules();
 
     delete dummy_thread;
     delete dummy_command;
-    delete dummy_event;
+    delete rule_generator_event;
 }
 
 std::vector<double> RulesWrapper::getCriteriaValues(bool need_yule) {

@@ -25,27 +25,8 @@ ObjectIdealizer::ObjectIdealizer(ObjectWrapper object,
 }
 
 bool ObjectIdealizer::isPredicateApplicable(SToken & predicate,
-                                            bool strong_negation,
-                                            bool strong_positive) {
+                                            bool strong_negation) {
     if (predicate.Sign >= 0) {
-
-        if (strong_positive) {
-            SToken probe_predicate;
-            probe_predicate.nPos = predicate.nPos;
-
-            for (probe_predicate.nValue = 0;
-                 probe_predicate.nValue < data.getCodesCount();
-                 probe_predicate.nValue++)
-            {
-                if ((ideal_object.isBelong(&probe_predicate)) &&
-                    (probe_predicate.nValue != predicate.nValue))
-                {
-
-                    return false;
-                }
-            }
-        }
-
         return ideal_object.isBelong(&predicate);
     } else {
         if (strong_negation_mode || strong_negation) {
@@ -70,6 +51,10 @@ bool ObjectIdealizer::isPredicateApplicable(SToken & predicate,
     }
 }
 
+bool ObjectIdealizer::isPredicateApplicableCons(SToken & predicate) {
+    return isPredicateApplicable(predicate, false);
+}
+
 bool ObjectIdealizer::isRuleApplicable(RuleLink & rule) {
     size_t rule_length = rule.getRuleLength();
 
@@ -92,7 +77,7 @@ double ObjectIdealizer::computeGamma(RuleLink & rule) {
     double cp = rule.getCP();
 
     SToken consequence = getConsequence(rule);
-    if (isPredicateApplicable(consequence)) {
+    if (isPredicateApplicableCons(consequence)) {
         return -log(1 - cp);
     } else {
         return log(1 - cp);
@@ -124,7 +109,7 @@ double ObjectIdealizer::computeGammaChangeOnAction(size_t attribute, size_t valu
 
         bool consequence_was_applicable = app_rules_consequence_applicable[rule_num];
 
-        if(consequence_was_applicable != isPredicateApplicable(consequence)) {
+        if(consequence_was_applicable != isPredicateApplicableCons(consequence)) {
             broken_consequenses_change += 2 * computeGamma(rule);
         }
     }
@@ -181,7 +166,7 @@ void ObjectIdealizer::splitRulesByApplicability() {
             applicable_rules.push_back(rule);
 
             SToken consequence = getConsequence(*rule);
-            if (isPredicateApplicable(consequence)) {
+            if (isPredicateApplicableCons(consequence)) {
                 app_rules_consequence_applicable.push_back(true);
             } else {
                 app_rules_consequence_applicable.push_back(false);
