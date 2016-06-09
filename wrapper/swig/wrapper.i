@@ -11,6 +11,7 @@
 
 // Instantiate templates used by example
 namespace std {
+   %template(TokenVector) vector<TokenWrapper>;
    %template(DoubleVector) vector<double>;
    %template(IntVector) vector<int>;
    %template(StringVector) vector<string>;

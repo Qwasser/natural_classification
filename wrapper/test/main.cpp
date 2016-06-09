@@ -90,11 +90,6 @@ std::vector<std::string> getTestRuleStrings() {
     return rule_strings;
 }
 
-TEST(ScidiTest, LinkageTest) {
-    Sequence test_sequence("test_sequence");
-}
-
-
 TEST(RulesWrapperTests, GenRulesTest) {
     std::vector<std::vector<std::string> > test_data = makeTestInput();
     DataWrapper data_wrapper(test_data);
@@ -188,7 +183,6 @@ TEST(ObjectIdealizerTests, InitializationTest) {
                               rules_wrapper,
                               data_wrapper);
 }
-
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

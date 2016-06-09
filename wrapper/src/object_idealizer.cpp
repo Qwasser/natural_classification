@@ -4,6 +4,8 @@
 #include <map>
 #include <iostream>
 
+#define DEBUG(x) do { std::cerr << x; } while (0)
+
 ObjectIdealizer::ObjectIdealizer(ObjectWrapper object,
                                  RulesWrapper rules,
                                  DataWrapper data,
@@ -12,7 +14,6 @@ ObjectIdealizer::ObjectIdealizer(ObjectWrapper object,
                                                              strong_negation_mode(strong_negation),
                                                              action(action),
                                                              initial_rules(rules)
-
 {
     SEQSElem obj = object.getObj();
     ideal_object.Create(&obj, data.getCodesCount());
@@ -29,7 +30,7 @@ bool ObjectIdealizer::isPredicateApplicable(SToken & predicate,
     if (predicate.Sign >= 0) {
         return ideal_object.isBelong(&predicate);
     } else {
-        if (strong_negation_mode || strong_negation) {
+        if (strong_negation) {
             return !ideal_object.isBelong(&predicate);
         } else {
             SToken probe_predicate;
@@ -52,7 +53,7 @@ bool ObjectIdealizer::isPredicateApplicable(SToken & predicate,
 }
 
 bool ObjectIdealizer::isPredicateApplicableCons(SToken & predicate) {
-    return isPredicateApplicable(predicate, false);
+    return isPredicateApplicable(predicate, true);
 }
 
 bool ObjectIdealizer::isRuleApplicable(RuleLink & rule) {
@@ -65,7 +66,7 @@ bool ObjectIdealizer::isRuleApplicable(RuleLink & rule) {
         current_token.nValue = rule[token_id].Value;
         current_token.Sign = rule[token_id].Sign;
 
-        if (!isPredicateApplicable(current_token)) {
+        if (!isPredicateApplicable(current_token, this->strong_negation_mode)) {
             return false;
         }
     }
@@ -96,7 +97,17 @@ void ObjectIdealizer::flipFeature(size_t attribute, size_t value) {
     }
 }
 
-double ObjectIdealizer::computeGammaChangeOnAction(size_t attribute, size_t value) {
+double ObjectIdealizer::computeGammaChangeOnAction(size_t attribute, size_t value, bool record_rules_distribution) {
+    if (record_rules_distribution) {
+        last_predicting_rules.resize(0);
+        last_predicting_rules_gamma.resize(0);
+
+        last_applicable_rules.resize(0);
+        last_applicable_rules_gamma.resize(0);
+
+        last_broken_rules.resize(0);
+        last_broken_rules_gamma.resize(0);
+    }
 
     flipFeature(attribute, value);
     double broken_consequenses_change = 0;
@@ -111,14 +122,23 @@ double ObjectIdealizer::computeGammaChangeOnAction(size_t attribute, size_t valu
 
         if(consequence_was_applicable != isPredicateApplicableCons(consequence)) {
             broken_consequenses_change += 2 * computeGamma(rule);
+
+            if (record_rules_distribution) {
+                last_predicting_rules.push_back(applicable_rules[rule_num]);
+                last_predicting_rules_gamma.push_back(2 * computeGamma(rule));
+            }
         }
     }
-
 
     double new_applicable_rules_change = 0;
     for (RuleLink * rule : not_applicable_rules) {
         if(isRuleApplicable(*rule)) {
             new_applicable_rules_change += computeGamma(*rule);
+
+            if (record_rules_distribution) {
+                last_applicable_rules.push_back(rule);
+                last_applicable_rules_gamma.push_back(computeGamma(*rule));
+            }
         }
     }
 
@@ -126,6 +146,11 @@ double ObjectIdealizer::computeGammaChangeOnAction(size_t attribute, size_t valu
     for (RuleLink * rule : applicable_rules) {
         if(!isRuleApplicable(*rule)) {
             broken_rules_change -= computeGamma(*rule);
+
+            if (record_rules_distribution) {
+                last_broken_rules.push_back(rule);
+                last_broken_rules_gamma.push_back(computeGamma(*rule));
+            }
         }
     }
 
@@ -152,6 +177,8 @@ double ObjectIdealizer::computeGammaChangeOnActionBrute(size_t attribute, size_t
 }
 
 void ObjectIdealizer::splitRulesByApplicability() {
+    DEBUG("Splitting rules by applicability" << std::endl);
+
     applicable_rules.resize(0);
     not_applicable_rules.resize(0);
     app_rules_consequence_applicable.resize(0);
@@ -187,6 +214,8 @@ SToken ObjectIdealizer::getConsequence(RuleLink & rule) {
 }
 
 bool ObjectIdealizer::idealizationStep(bool brute) {
+    DEBUG("Performing idealization step" << std::endl);
+
     double best_delition_gamma = -INFINITY;
     SToken best_delition_token;
 
@@ -199,6 +228,7 @@ bool ObjectIdealizer::idealizationStep(bool brute) {
     {
         for (current_token.nValue = 0; current_token.nValue < data.getCodesCount(); ++current_token.nValue)
         {
+            DEBUG("Flipping attribute " <<  current_token.nPos << " value " << current_token.nValue << std::endl);
             double gamma_change;
             if (!brute) {
                 gamma_change = computeGammaChangeOnAction(current_token.nPos,
@@ -208,6 +238,9 @@ bool ObjectIdealizer::idealizationStep(bool brute) {
                 gamma_change = computeGammaChangeOnActionBrute(current_token.nPos,
                                                           current_token.nValue);
             }
+
+            DEBUG("Gamma change is " <<  gamma_change << std::endl);
+
             if (ideal_object.isBelong(&current_token) && gamma_change > best_delition_gamma) {
                 best_delition_gamma = gamma_change;
                 best_delition_token = current_token;    
@@ -218,6 +251,17 @@ bool ObjectIdealizer::idealizationStep(bool brute) {
         }
     }
 
+    DEBUG("Finished attribute selection. " <<
+          "Best insertion attribute is " <<
+          best_insertion_token.nPos << " " <<
+          best_insertion_token.nValue <<
+          " Gamma will change by " << best_insertion_gamma << std::endl);
+
+    DEBUG("Best deletion attribute is " <<
+          best_delition_token.nPos << " " <<
+          best_delition_token.nValue <<
+          " Gamma will change by " << best_delition_gamma << std::endl);
+
     bool gamma_maximum_reached = true;
 
     last_deletion_gamma_change = best_delition_gamma;
@@ -227,22 +271,43 @@ bool ObjectIdealizer::idealizationStep(bool brute) {
         gamma_maximum_reached = false;
     }
 
+    DEBUG("Performing best attribute flip!" << std::endl);
+
     if (best_delition_gamma > best_insertion_gamma) {
         ideal_object.ExcludeT(&best_delition_token);
         current_gamma += best_delition_gamma;
+        last_moved_predicate = best_delition_token;
 
     } else if (best_delition_gamma < best_insertion_gamma) {
         ideal_object.IncludeT(&best_insertion_token);
         current_gamma += best_insertion_gamma;
+        last_moved_predicate = best_insertion_token;
 
     } else if (best_delition_gamma == best_insertion_gamma && best_insertion_gamma > 0) {
         if (action == insert) {
             ideal_object.IncludeT(&best_insertion_token);
             current_gamma += best_insertion_gamma;
+
+            last_moved_predicate = best_delition_token;
         } else if (action == remove) {
             ideal_object.ExcludeT(&best_delition_token);
             current_gamma += best_delition_gamma;
+
+            last_moved_predicate = best_insertion_token;
         }
+    }
+
+    DEBUG("Done!" << std::endl);
+
+    if (!gamma_maximum_reached) {
+        DEBUG("Computing flip statistics..." << std::endl);
+
+        flipFeature(last_moved_predicate.nPos, last_moved_predicate.nValue);
+        computeGammaChangeOnAction(last_moved_predicate.nPos,
+                                   last_moved_predicate.nValue,
+                                   true);
+        flipFeature(last_moved_predicate.nPos, last_moved_predicate.nValue);
+        DEBUG("Done!" << std::endl);
     }
 
     splitRulesByApplicability();

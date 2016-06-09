@@ -135,3 +135,31 @@ std::vector<double> RulesWrapper::getCP() {
 
     return cp_values;
 }
+
+std::vector<TokenWrapper> RulesWrapper::getRuleAsTokenArray(unsigned int rule_id) {
+    RulesStorage & s = *(storage.get());
+    RuleLink & rule = s[rule_id];
+
+    size_t rule_length = rule.getRuleLength();
+
+    std::vector<TokenWrapper> token_representation(rule_length + 1);
+
+    SToken current_token;
+
+    for (size_t token_id = 0; token_id < rule_length; ++token_id)
+    {
+        current_token.nPos = rule[token_id].Shift;
+        current_token.nValue = rule[token_id].Value;
+        current_token.Sign = rule[token_id].Sign;
+        token_representation[token_id].setToken(current_token);
+    }
+
+    SToken consequence;
+    consequence.nPos = rule.getTTPos();
+    consequence.nValue = rule.getTTValue();
+    consequence.Sign = rule.getTTSign();
+
+    token_representation[rule_length].setToken(consequence);
+
+    return token_representation;
+}

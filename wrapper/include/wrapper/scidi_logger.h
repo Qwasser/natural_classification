@@ -1,7 +1,6 @@
 #include <iostream>
 #include "Reporter.h"
 
-
 class ScidiLogger : public Reporter
 {
 public:

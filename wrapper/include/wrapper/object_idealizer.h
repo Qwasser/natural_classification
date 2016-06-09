@@ -1,4 +1,4 @@
- #ifndef OBJECT_IDEALIZER_H
+#ifndef OBJECT_IDEALIZER_H
 #define OBJECT_IDEALIZER_H
 
 #include <vector>
@@ -21,7 +21,7 @@ public:
                     RulesWrapper rules,
                     DataWrapper data,
                     bool strong_negation=false,
-                    TieBreakingAction action=remove);
+                    TieBreakingAction action=insert);
 
     bool idealizationStep(bool brute = false);
 
@@ -51,6 +51,35 @@ public:
         return RulesWrapper(not_applicable_rules, data);
     }
 
+    // Debug methods
+    RulesWrapper getLastApplicableRules() {
+        return RulesWrapper(last_applicable_rules, data);
+    }
+
+    RulesWrapper getLastBrokenRules() {
+        return RulesWrapper(last_broken_rules, data);
+    }
+
+    RulesWrapper getLastPredictingRules() {
+        return RulesWrapper(last_predicting_rules, data);
+    }
+
+    std::vector<double> getLastApplicableRulesGamma() {
+        return last_applicable_rules_gamma;
+    }
+
+    std::vector<double> getLastBrokenRulesGamma() {
+        return last_broken_rules_gamma;
+    }
+
+    std::vector<double> getLastPredictingRulesGamma() {
+        return last_predicting_rules_gamma;
+    }
+
+    TokenWrapper getLastMovedPredicate() {
+        return TokenWrapper(last_moved_predicate);
+    }
+
 private:
     DataWrapper data;
 
@@ -63,7 +92,7 @@ private:
     double last_deletion_gamma_change = 0;
 
     bool isPredicateApplicable(SToken & predicate,
-                               bool strong_negetion = false);
+                               bool strong_negetion);
 
     bool isPredicateApplicableCons(SToken & predicate);
 
@@ -78,12 +107,23 @@ private:
     std::vector<bool> app_rules_consequence_applicable;
     std::vector<RuleLink *> not_applicable_rules;
 
-    double computeGammaChangeOnAction(size_t attribute, size_t value);
+    double computeGammaChangeOnAction(size_t attribute, size_t value, bool record_rules_distribution = false);
     double computeGammaChangeOnActionBrute(size_t attribute, size_t value);
 
     void splitRulesByApplicability();
 
     SToken getConsequence(RuleLink & rule);
+
+    // Rules, took part in last decision, keep for debugging
+    SToken last_moved_predicate;
+
+    std::vector<RuleLink *> last_applicable_rules;
+    std::vector<RuleLink *> last_broken_rules;
+    std::vector<RuleLink *> last_predicting_rules;
+
+    std::vector<double> last_applicable_rules_gamma;
+    std::vector<double> last_broken_rules_gamma;
+    std::vector<double> last_predicting_rules_gamma;
 };
 
 #endif // OBJECT_IDEALIZER_H

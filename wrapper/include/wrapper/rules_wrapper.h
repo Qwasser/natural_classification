@@ -5,8 +5,39 @@
 #include <memory>
 
 #include "RulesStorage.h"
+#include "Rule.h"
+#include "CIdelObject.h"
 
 #include "wrapper/data_wrapper.h"
+
+class TokenWrapper {
+  public:
+    TokenWrapper() {
+    }
+
+    TokenWrapper(SToken my_token) {
+        this->token = my_token;
+    }
+
+    void setToken(SToken my_token) {
+        this->token = my_token;
+    }
+
+    int getValue() {
+        return token.nValue;
+    }
+
+    int getSign() {
+        return token.Sign;
+    }
+
+    int getPosition() {
+        return token.nPos;
+    }
+
+  private:
+    SToken token;
+};
 
 class RulesWrapper {
 public:
@@ -26,6 +57,8 @@ public:
 
   std::vector<std::string> asStringVectors();
 
+  std::vector<TokenWrapper> getRuleAsTokenArray(unsigned int rule_id);
+
   RulesStorage * getStoragePointer() {
       return storage.get();
   }
@@ -43,4 +76,5 @@ private:
 
   std::vector<double> getCriteriaValues(bool need_yule);
 };
+
 #endif
