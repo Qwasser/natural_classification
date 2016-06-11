@@ -21,7 +21,7 @@ public:
     std::string toJSON() const;
 
     // Checs and mappings
-    int getFeatureCount() const;
+    size_t getFeatureCount() const;
     int encode(size_t feature_id, std::string value) const;
     std::string decode(size_t feature_id, std::string code) const;
     bool containsValue(size_t feature_id, std::string value) const;

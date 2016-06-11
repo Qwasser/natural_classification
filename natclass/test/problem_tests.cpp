@@ -22,4 +22,38 @@ std::vector<std::map<std::string, int>> genterateTestMapping() {
 
 TEST(problem_test, construction_test) {
     Problem p(genterateTestMapping());
+    EXPECT_EQ(p.getFeatureCount(), 2);
 }
+
+
+TEST(problem_test, encode_test) {
+    Problem p(genterateTestMapping());
+
+    EXPECT_EQ(p.encode(0, "a"), 0);
+    EXPECT_EQ(p.encode(0, "b"), 1);
+    EXPECT_EQ(p.encode(1, "c"), 0);
+    EXPECT_EQ(p.encode(1, "d"), 1);
+
+    try {
+       p.encode(2, "a");
+       FAIL() << "Expected std::out_of_range";
+    }
+    catch(std::out_of_range const & err) {
+       EXPECT_EQ(err.what(),std::string("No such feature!"));
+    }
+    catch(...) {
+       FAIL() << "Expected std::out_of_range";
+    }
+
+    try {
+       p.encode(0, "aaaaa");
+       FAIL() << "Expected std::out_of_range";
+    }
+    catch(std::out_of_range const & err) {
+       EXPECT_EQ(err.what(),std::string("Feature does not contain the value!"));
+    }
+    catch(...) {
+       FAIL() << "Expected std::out_of_range";
+    }
+}
+

@@ -16,3 +16,20 @@ Problem::Problem (std::vector<std::map<std::string, int>> feature_value_mappings
         }
     }
 }
+
+size_t Problem::getFeatureCount() const {
+    return value_mappings.size();
+}
+
+int Problem::encode(size_t feature_id, std::string value) const {
+    if (feature_id >= value_mappings.size()) {
+        throw std::out_of_range("No such feature!");
+    }
+
+    if (value_mappings[feature_id].find(value) == value_mappings[feature_id].end()) {
+        throw std::out_of_range("Feature does not contain the value!");
+    }
+
+    int code = value_mappings[feature_id].find(value)->second;
+    return code;
+}
