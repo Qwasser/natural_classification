@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.12 )
+cmake_minimum_required( VERSION 2.8.12 )
 
 set(PROJECT_NAME_STR natclass)
 project(${PROJECT_NAME_STR})
