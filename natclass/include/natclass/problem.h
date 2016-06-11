@@ -14,7 +14,7 @@ class Problem {
 
 public:
     // Construction
-    Problem (std::vector<std::map<std::string, int> value_mappings);
+    Problem (std::vector<std::map<std::string, int>> feature_value_mappings);
     Problem (std::string json);
 
     // Serrialization
@@ -28,8 +28,8 @@ public:
 
     // Iteration
     typedef MapValueIterator<std::map<int, std::string>::const_iterator> code_iterator;
-    code_value_iterator getBeginIter(size_t feature_id) const;
-    code_value_iterator getEndIter(size_t feature_id) const;
+    code_iterator getBeginIter(size_t feature_id) const;
+    code_iterator getEndIter(size_t feature_id) const;
 
 private:
     std::vector<std::map<std::string, int>> value_mappings;

@@ -6,44 +6,44 @@ class MapValueIterator : public std::iterator<std::bidirectional_iterator_tag,
         typename Iter::value_type::second_type> {
 
 public:
-    map_iterator() {}
-    map_iterator(Iter j) : i(j) {}
+    MapValueIterator() {}
+    MapValueIterator(Iter j) : i(j) {}
 
-    map_iterator& operator++() {
+    MapValueIterator& operator++() {
         ++i;
         return *this;
     }
 
-    map_iterator operator++(int) {
+    MapValueIterator operator++(int) {
         auto tmp = *this;
         ++(*this);
         return tmp;
     }
 
-    map_iterator& operator--() {
+    MapValueIterator& operator--() {
         --i;
         return *this;
     }
 
-    map_iterator operator--(int) {
+    MapValueIterator operator--(int) {
         auto tmp = *this;
         --(*this);
         return tmp;
     }
 
-    bool operator==(map_iterator j) const {
+    bool operator==(MapValueIterator j) const {
         return i == j.i;
     }
 
-    bool operator!=(map_iterator j) const {
+    bool operator!=(MapValueIterator j) const {
         return !(*this == j);
     }
 
-    reference operator*() {
+    typename std::iterator<std::bidirectional_iterator_tag, typename Iter::value_type::second_type>::reference operator*() {
         return i->second;
     }
 
-    pointer operator->() {
+    typename std::iterator<std::bidirectional_iterator_tag, typename Iter::value_type::second_type>::pointer operator->() {
         return &i->second;
     }
 
@@ -53,5 +53,5 @@ protected:
 
 template <typename Iter>
 inline MapValueIterator<Iter> make_map_iterator(Iter j) {
-    return map_iterator<Iter>(j);
+    return MapValueIterator<Iter>(j);
 }
