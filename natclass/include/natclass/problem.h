@@ -27,7 +27,7 @@ public:
     bool containsValue(size_t feature_id, std::string value) const;
 
     // Iteration
-    typedef MapValueIterator<std::map<int, std::string>::const_iterator> code_iterator;
+    typedef MapValueIterator<std::map<std::string, int>::const_iterator> code_iterator;
     code_iterator getBeginIter(size_t feature_id) const;
     code_iterator getEndIter(size_t feature_id) const;
 

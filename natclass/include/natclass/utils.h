@@ -39,7 +39,7 @@ public:
         return !(*this == j);
     }
 
-    typename std::iterator<std::bidirectional_iterator_tag, typename Iter::value_type::second_type>::reference operator*() {
+    const typename std::iterator<std::bidirectional_iterator_tag, typename Iter::value_type::second_type>::value_type& operator*() const {
         return i->second;
     }
 

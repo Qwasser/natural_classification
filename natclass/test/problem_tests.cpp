@@ -1,3 +1,6 @@
+#include <iostream>
+#include <set>
+
 #include "gtest/gtest.h"
 
 #include <natclass/problem.h>
@@ -104,6 +107,36 @@ TEST(problem_test, contains_value_test) {
 
     EXPECT_EQ(p.containsValue(0, "a"), true);
     EXPECT_EQ(p.containsValue(0, "c"), false);
+}
+
+TEST(problem_test, iterator_test) {
+    std::vector<std::map<std::string, int>> mapping = genterateTestMapping();
+
+    Problem p(mapping);
+
+    try {
+       p.getBeginIter(10);
+       FAIL() << "Expected std::out_of_range";
+    }
+    catch(std::out_of_range const & err) {
+       EXPECT_EQ(err.what(),std::string("No such feature!"));
+    }
+
+    for (int i = 0; i < p.getFeatureCount(); ++i) {
+        std::set<int> codes;
+
+        for (auto it = p.getBeginIter(i); it != p.getEndIter(i); ++it) {
+            codes.insert(*it);
+        }
+
+        std::set<int> correct_codes;
+        for (auto pair : mapping[i]) {
+           correct_codes.insert(pair.second);
+        }
+
+        EXPECT_EQ(codes, correct_codes);
+    }
+
 }
 
 

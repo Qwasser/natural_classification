@@ -56,3 +56,13 @@ bool Problem::containsValue(size_t feature_id, std::string value) const {
     }
     return true;
 }
+
+Problem::code_iterator Problem::getBeginIter(size_t feature_id) const {
+    checkRange(feature_id);
+    return make_map_iterator(value_mappings[feature_id].cbegin());
+}
+
+Problem::code_iterator Problem::getEndIter(size_t feature_id) const {
+    checkRange(feature_id);
+    return make_map_iterator(value_mappings[feature_id].cend());
+}
