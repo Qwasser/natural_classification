@@ -23,7 +23,7 @@ public:
     // Checs and mappings
     size_t getFeatureCount() const;
     int encode(size_t feature_id, std::string value) const;
-    std::string decode(size_t feature_id, std::string code) const;
+    std::string decode(size_t feature_id, int code) const;
     bool containsValue(size_t feature_id, std::string value) const;
 
     // Iteration
@@ -34,6 +34,8 @@ public:
 private:
     std::vector<std::map<std::string, int>> value_mappings;
     std::vector<std::map<int, std::string>> code_mappings;
+
+    void checkRange(size_t feature_id) const;
 };
 
 #endif

@@ -21,10 +21,14 @@ size_t Problem::getFeatureCount() const {
     return value_mappings.size();
 }
 
-int Problem::encode(size_t feature_id, std::string value) const {
+void Problem::checkRange(size_t feature_id) const {
     if (feature_id >= value_mappings.size()) {
         throw std::out_of_range("No such feature!");
     }
+}
+
+int Problem::encode(size_t feature_id, std::string value) const {
+    checkRange(feature_id);
 
     if (value_mappings[feature_id].find(value) == value_mappings[feature_id].end()) {
         throw std::out_of_range("Feature does not contain the value!");
@@ -32,4 +36,23 @@ int Problem::encode(size_t feature_id, std::string value) const {
 
     int code = value_mappings[feature_id].find(value)->second;
     return code;
+}
+
+std::string Problem::decode(size_t feature_id, int code) const {
+    checkRange(feature_id);
+
+    if (code_mappings[feature_id].find(code) == code_mappings[feature_id].end()) {
+        throw std::out_of_range("Feature does not contain the code!");
+    }
+
+    return code_mappings[feature_id].find(code)->second;
+}
+
+bool Problem::containsValue(size_t feature_id, std::string value) const {
+    checkRange(feature_id);
+
+    if (value_mappings[feature_id].find(value) == value_mappings[feature_id].end()) {
+        return false;
+    }
+    return true;
 }
