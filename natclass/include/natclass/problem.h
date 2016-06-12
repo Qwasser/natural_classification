@@ -15,7 +15,7 @@ class Problem {
 public:
     // Construction
     Problem (std::vector<std::map<std::string, int>> feature_value_mappings);
-    Problem (std::string json);
+    Problem (std::string json_str);
 
     // Serrialization
     std::string toJSON() const;
@@ -31,11 +31,19 @@ public:
     code_iterator getBeginIter(size_t feature_id) const;
     code_iterator getEndIter(size_t feature_id) const;
 
+    // Operators
+    bool operator==(const Problem &other) const;
+
+    bool operator!=(const Problem &other) const {
+      return !(*this == other);
+    }
+
 private:
     std::vector<std::map<std::string, int>> value_mappings;
     std::vector<std::map<int, std::string>> code_mappings;
 
     void checkRange(size_t feature_id) const;
+    void initCodeMappings();
 };
 
 #endif

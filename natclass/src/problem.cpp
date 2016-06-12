@@ -1,7 +1,11 @@
 #include <stdexcept>
+
+#include "json.hpp"
+using json = nlohmann::json;
+
 #include "natclass/problem.h"
 
-Problem::Problem (std::vector<std::map<std::string, int>> feature_value_mappings) : value_mappings(feature_value_mappings) {
+void Problem::initCodeMappings() {
     for (auto mapping : value_mappings) {
         code_mappings.push_back(std::map<int, std::string>());
 
@@ -15,6 +19,10 @@ Problem::Problem (std::vector<std::map<std::string, int>> feature_value_mappings
             current_map[key_val.second] = key_val.first;
         }
     }
+}
+
+Problem::Problem (std::vector<std::map<std::string, int>> feature_value_mappings) : value_mappings(feature_value_mappings) {
+    initCodeMappings();
 }
 
 size_t Problem::getFeatureCount() const {
@@ -66,3 +74,26 @@ Problem::code_iterator Problem::getEndIter(size_t feature_id) const {
     checkRange(feature_id);
     return make_map_iterator(value_mappings[feature_id].cend());
 }
+
+std::string Problem::toJSON() const {
+    json j(this->value_mappings);
+    return j.dump();
+}
+
+Problem::Problem (std::string json_str) {
+    auto j = json::parse(json_str);
+
+    value_mappings.resize(j.size());
+    for (size_t i = 0; i < j.size(); ++i) {
+        for (json::iterator it = j[i].begin(); it != j[i].end(); ++it) {
+          value_mappings[i][it.key()] = it.value().get<int>();
+        }
+    }
+
+    initCodeMappings();
+}
+
+ bool Problem::operator==(const Problem &other) const {
+     return value_mappings == other.value_mappings;
+ }
+

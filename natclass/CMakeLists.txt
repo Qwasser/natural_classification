@@ -6,7 +6,7 @@ project(${PROJECT_NAME_STR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pthread -std=c++11")
 set(NATCLASS_INCLUDES ${PROJECT_SOURCE_DIR}/include)
 
-include_directories(${NATCLASS_INCLUDES})
+include_directories(${NATCLASS_INCLUDES} ${JSON_INCLUDE_DIRS})
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 file(GLOB HEADER_FILES "${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME_STR}/*.h")

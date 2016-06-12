@@ -39,11 +39,13 @@ public:
         return !(*this == j);
     }
 
-    const typename std::iterator<std::bidirectional_iterator_tag, typename Iter::value_type::second_type>::value_type& operator*() const {
+    const typename std::iterator<std::bidirectional_iterator_tag,
+    typename Iter::value_type::second_type>::value_type& operator*() const {
         return i->second;
     }
 
-    typename std::iterator<std::bidirectional_iterator_tag, typename Iter::value_type::second_type>::pointer operator->() {
+    typename std::iterator<std::bidirectional_iterator_tag,
+    typename Iter::value_type::second_type>::pointer operator->() {
         return &i->second;
     }
 

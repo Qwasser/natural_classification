@@ -11,6 +11,8 @@ enable_testing()
 
 set(EXT_PROJECTS_DIR ${PROJECT_SOURCE_DIR}/ext)
 add_subdirectory(${EXT_PROJECTS_DIR}/gtest)
+add_subdirectory(${EXT_PROJECTS_DIR}/json)
+
 
 add_subdirectory( natclass )
 

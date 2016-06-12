@@ -122,7 +122,7 @@ TEST(problem_test, iterator_test) {
        EXPECT_EQ(err.what(),std::string("No such feature!"));
     }
 
-    for (int i = 0; i < p.getFeatureCount(); ++i) {
+    for (size_t i = 0; i < p.getFeatureCount(); ++i) {
         std::set<int> codes;
 
         for (auto it = p.getBeginIter(i); it != p.getEndIter(i); ++it) {
@@ -139,4 +139,8 @@ TEST(problem_test, iterator_test) {
 
 }
 
+TEST(problem_test, json_test) {
+    Problem p(genterateTestMapping());
+    EXPECT_TRUE(Problem(p.toJSON()) == p);
+}
 
