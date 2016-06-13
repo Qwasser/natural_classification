@@ -6,32 +6,33 @@
 
 #include "utils.h"
 
+/*!
+ * Class represents metainformation for machine learning problem with categorical data
+ * It conatins features, values for each feature and their integer encodings.
+ */
 class Problem {
-    /*
-     * Class represents metainformation for machine learning problem with categorical data
-     * It conatins features, values for each feature and their integer encodings.
-     */
+
 
 public:
-    // Construction
+    //! Construction
     Problem (std::vector<std::map<std::string, int>> feature_value_mappings);
     Problem (std::string json_str);
 
-    // Serrialization
+    //! Serrialization
     std::string toJSON() const;
 
-    // Checs and mappings
+    //! Checs and mappings
     size_t getFeatureCount() const;
     int encode(size_t feature_id, std::string value) const;
     std::string decode(size_t feature_id, int code) const;
     bool containsValue(size_t feature_id, std::string value) const;
 
-    // Iteration
+    //! Iteration
     typedef MapValueIterator<std::map<std::string, int>::const_iterator> code_iterator;
     code_iterator getBeginIter(size_t feature_id) const;
     code_iterator getEndIter(size_t feature_id) const;
 
-    // Operators
+    //! Operators
     bool operator==(const Problem &other) const;
 
     bool operator!=(const Problem &other) const {
