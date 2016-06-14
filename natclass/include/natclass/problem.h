@@ -17,6 +17,7 @@ public:
     //! Construction
     Problem (std::vector<std::map<std::string, int>> feature_value_mappings);
     Problem (std::string json_str);
+    Problem () {}
 
     //! Serrialization
     std::string toJSON() const;
