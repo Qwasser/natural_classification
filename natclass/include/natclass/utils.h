@@ -1,3 +1,6 @@
+#ifndef UTILS_H
+#define UTILS_H
+
 #include <map>
 #include <iterator>
 
@@ -57,3 +60,5 @@ template <typename Iter>
 inline MapValueIterator<Iter> make_map_iterator(Iter j) {
     return MapValueIterator<Iter>(j);
 }
+
+#endif
