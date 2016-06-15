@@ -15,8 +15,10 @@ class Problem {
 
 public:
     //! Construction
-    Problem (std::vector<std::map<std::string, int>> feature_value_mappings);
+    Problem (std::vector<std::map<std::string, int>> & feature_value_mappings);
+    Problem (std::string & json_str);
     Problem (std::string json_str);
+
     Problem () {}
 
     //! Serrialization
@@ -46,6 +48,8 @@ private:
 
     void checkRange(size_t feature_id) const;
     void initCodeMappings();
+
+    void fromJSON(std::string & json_str);
 };
 
 #endif

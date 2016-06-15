@@ -24,13 +24,17 @@ std::vector<std::map<std::string, int>> genterateTestMapping() {
 
 
 TEST(problem_test, construction_test) {
-    Problem p(genterateTestMapping());
+    std::vector<std::map<std::string, int>> mapping = genterateTestMapping();
+
+    Problem p(mapping);
     EXPECT_EQ(p.getFeatureCount(), 2);
 }
 
 
 TEST(problem_test, encode_test) {
-    Problem p(genterateTestMapping());
+    std::vector<std::map<std::string, int>> mapping = genterateTestMapping();
+
+    Problem p(mapping);
 
     EXPECT_EQ(p.encode(0, "a"), 0);
     EXPECT_EQ(p.encode(0, "b"), 1);
@@ -61,7 +65,9 @@ TEST(problem_test, encode_test) {
 }
 
 TEST(problem_test, decode_test) {
-    Problem p(genterateTestMapping());
+    std::vector<std::map<std::string, int>> mapping = genterateTestMapping();
+
+    Problem p(mapping);
 
     EXPECT_EQ(p.decode(0, 0), "a");
     EXPECT_EQ(p.decode(0, 1), "b");
@@ -92,7 +98,9 @@ TEST(problem_test, decode_test) {
 }
 
 TEST(problem_test, contains_value_test) {
-    Problem p(genterateTestMapping());
+    std::vector<std::map<std::string, int>> mapping = genterateTestMapping();
+
+    Problem p(mapping);
 
     try {
        p.containsValue(2, "test");
@@ -140,7 +148,9 @@ TEST(problem_test, iterator_test) {
 }
 
 TEST(problem_test, json_test) {
-    Problem p(genterateTestMapping());
+    std::vector<std::map<std::string, int>> mapping = genterateTestMapping();
+    Problem p(mapping);
+
     EXPECT_TRUE(Problem(p.toJSON()) == p);
 }
 

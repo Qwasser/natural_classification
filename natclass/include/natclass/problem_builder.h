@@ -20,13 +20,13 @@ class ProblemBuilder {
     };
 
     //! Extracts features and values from raw data. Builds problem metadata.
-    void fromData(std::vector<std::vector<std::string>> data, Mode mode = SEPARATE_VALUES);
+    void fromData(std::vector<std::vector<std::string>> & data, Mode mode = SEPARATE_VALUES);
 
     //! Adds new feature without values
     void addFeature();
 
     //! Adds new feature with values from vector
-    void addFeatureWithValues(std::vector<std::string> values);
+    void addFeatureWithValues(std::vector<std::string> & values);
 
     //! Add value to feature by id
     void addValue(size_t feature_id, std::string value);
@@ -35,7 +35,7 @@ class ProblemBuilder {
     void addValueAll(std::string value);
 
     //! Add collection of values to feature by id
-    void addValues(size_t feature_id, std::vector<std::string> values);
+    void addValues(size_t feature_id, std::vector<std::string> & values);
 
     //! Removes feature bu ID
     void removeFeature(size_t feature_id);

@@ -1,6 +1,9 @@
 #ifndef TEST_DATA_H
 #define TEST_DATA_H
 
+#include <set>
+#include <vector>
+
 //! Class for wrapping test dataset
 class TestData {
 public:

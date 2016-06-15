@@ -62,7 +62,9 @@ TEST(problem_builder_test, from_data_separate_test) {
     TestData data = SimpleTestData();
 
     ProblemBuilder pb;
-    pb.fromData(data.getData(), ProblemBuilder::SEPARATE_VALUES);
+    auto d = data.getData();
+
+    pb.fromData(d, ProblemBuilder::SEPARATE_VALUES);
 
     Problem p = pb.getResult();
 
@@ -88,7 +90,9 @@ TEST(problem_builder_test, from_data_common_test) {
     TestData data = SimpleTestData();
 
     ProblemBuilder pb;
-    pb.fromData(data.getData(), ProblemBuilder::COMMON_VALUES);
+    auto d = data.getData();
+
+    pb.fromData(d, ProblemBuilder::COMMON_VALUES);
 
     Problem p = pb.getResult();
 
@@ -103,7 +107,9 @@ TEST(problem_builder_test, result_constancy_test) {
     TestData data = SimpleTestData();
 
     ProblemBuilder pb;
-    pb.fromData(data.getData(), ProblemBuilder::COMMON_VALUES);
+    auto d = data.getData();
+
+    pb.fromData(d, ProblemBuilder::COMMON_VALUES);
 
     Problem p1 = pb.getResult();
     Problem p2 = pb.getResult();

@@ -21,7 +21,7 @@ void Problem::initCodeMappings() {
     }
 }
 
-Problem::Problem (std::vector<std::map<std::string, int>> feature_value_mappings) : value_mappings(feature_value_mappings) {
+Problem::Problem (std::vector<std::map<std::string, int>> & feature_value_mappings) : value_mappings(feature_value_mappings) {
     initCodeMappings();
 }
 
@@ -80,7 +80,7 @@ std::string Problem::toJSON() const {
     return j.dump();
 }
 
-Problem::Problem (std::string json_str) {
+void Problem::fromJSON(std::string & json_str) {
     auto j = json::parse(json_str);
 
     value_mappings.resize(j.size());
@@ -91,6 +91,14 @@ Problem::Problem (std::string json_str) {
     }
 
     initCodeMappings();
+}
+
+Problem::Problem (std::string & json_str) {
+    fromJSON(json_str);
+}
+
+Problem::Problem (std::string json_str) {
+    fromJSON(json_str);
 }
 
  bool Problem::operator==(const Problem &other) const {

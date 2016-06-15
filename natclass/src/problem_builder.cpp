@@ -27,13 +27,13 @@ void ProblemBuilder::addValue(size_t feature_id, std::string value) {
     }
 }
 
-void ProblemBuilder::addValues(size_t feature_id, std::vector<std::string> values) {
+void ProblemBuilder::addValues(size_t feature_id, std::vector<std::string> & values) {
     for (auto val : values) {
         addValue(feature_id, val);
     }
 }
 
-void ProblemBuilder::addFeatureWithValues(std::vector<std::string> values) {
+void ProblemBuilder::addFeatureWithValues(std::vector<std::string> & values) {
     addFeature();
     addValues(value_mappings.size() - 1, values);
 }
@@ -53,7 +53,7 @@ void ProblemBuilder::addValueAll(std::string value) {
     }
 }
 
-void ProblemBuilder::fromData(std::vector<std::vector<std::string>> data, Mode mode) {
+void ProblemBuilder::fromData(std::vector<std::vector<std::string>> & data, Mode mode) {
     size_t width = data[0].size();
     for (auto vec : data) {
         if (vec.size() != width) {
