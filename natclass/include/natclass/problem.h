@@ -4,6 +4,9 @@
 #include <map>
 #include <vector>
 
+#include "json.hpp"
+using json = nlohmann::json;
+
 #include "utils.h"
 
 /*!
@@ -16,13 +19,13 @@ class Problem {
 public:
     //! Construction
     Problem (std::vector<std::map<std::string, int>> & feature_value_mappings);
-    Problem (std::string & json_str);
-    Problem (std::string json_str);
+    Problem (json & j);
+    Problem (json j);
 
     Problem () {}
 
     //! Serrialization
-    std::string toJSON() const;
+    json toJSON() const;
 
     //! Checs and mappings
     size_t getFeatureCount() const;
@@ -49,7 +52,7 @@ private:
     void checkRange(size_t feature_id) const;
     void initCodeMappings();
 
-    void fromJSON(std::string & json_str);
+    void fromJSON(json & j);
 };
 
 #endif

@@ -1,8 +1,5 @@
 #include <stdexcept>
 
-#include "json.hpp"
-using json = nlohmann::json;
-
 #include "natclass/problem.h"
 
 void Problem::initCodeMappings() {
@@ -75,14 +72,12 @@ Problem::code_iterator Problem::getEndIter(size_t feature_id) const {
     return make_map_iterator(value_mappings[feature_id].cend());
 }
 
-std::string Problem::toJSON() const {
+json Problem::toJSON() const {
     json j(this->value_mappings);
-    return j.dump();
+    return j;
 }
 
-void Problem::fromJSON(std::string & json_str) {
-    auto j = json::parse(json_str);
-
+void Problem::fromJSON(json & j) {
     value_mappings.resize(j.size());
     for (size_t i = 0; i < j.size(); ++i) {
         for (json::iterator it = j[i].begin(); it != j[i].end(); ++it) {
@@ -93,12 +88,12 @@ void Problem::fromJSON(std::string & json_str) {
     initCodeMappings();
 }
 
-Problem::Problem (std::string & json_str) {
-    fromJSON(json_str);
+Problem::Problem (json & j) {
+    fromJSON(j);
 }
 
-Problem::Problem (std::string json_str) {
-    fromJSON(json_str);
+Problem::Problem (json j) {
+    fromJSON(j);
 }
 
  bool Problem::operator==(const Problem &other) const {

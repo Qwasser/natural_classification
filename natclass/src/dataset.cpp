@@ -6,6 +6,14 @@ DataSet::DataSet (std::vector<std::vector<std::string>>  & data, ProblemBuilder:
     pb.fromData(data, mode);
     problem = pb.getResult();
 
+    initData(data);
+}
+
+DataSet::DataSet (std::vector<std::vector<std::string>> & data, Problem & p) : problem(p) {
+    initData(data);
+}
+
+void DataSet::initData(std::vector<std::vector<std::string>> & data) {
     n_rows = data.size();
     n_cols = data[0].size();
 
@@ -20,8 +28,18 @@ DataSet::DataSet (std::vector<std::vector<std::string>>  & data, ProblemBuilder:
     }
 }
 
-DataSet::DataSet (std::vector<std::vector<std::string>> & data, Problem & p) : problem(p) {
+json DataSet::toJSON() const {
+    json j;
+    j["problem"] = problem.toJSON();
 
+    for (size_t i = 0; i < n_rows; ++i) {
+        std::vector<int> row(n_cols);
+        for (size_t j = 0; j < n_cols; ++j) {
+            row[j] = getValue(i, j);
+        }
+        j["data"][std::to_string(i)] = json(row);
+    }
+    return j;
 }
 
 void DataSet::initEncodedData() {

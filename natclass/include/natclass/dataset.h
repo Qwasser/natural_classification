@@ -2,6 +2,10 @@
 #define DATASET_H
 
 #include <istream>
+
+#include "json.hpp"
+using json = nlohmann::json;
+
 #include "problem.h"
 #include "problem_builder.h"
 
@@ -11,10 +15,7 @@
 class DataSet {
 public:
     //! Deserrialization from json
-    DataSet (std::string & json_str);
-
-    //! Deserrialization from json stream (can pass file here)
-    DataSet (std::istream & json_input);
+    DataSet (json & json_str);
 
     //! Constructs from raw data. Additionally creates problem metadata.
     DataSet (std::vector<std::vector<std::string>> & data, ProblemBuilder::Mode mode = ProblemBuilder::Mode::SEPARATE_VALUES);
@@ -24,8 +25,8 @@ public:
      */
     DataSet (std::vector<std::vector<std::string>> & data, Problem & p);
 
-    //! Serrialization from json
-    std::string toJson() const;
+    //! Serrialization to json
+    json toJSON() const;
 
     //! Object count
     size_t nRows() const;
@@ -53,6 +54,8 @@ private:
 
     size_t n_rows;
     size_t n_cols;
+
+    void initData(std::vector<std::vector<std::string>> & data);
 
     void initEncodedData();
     void destroyEncodedData();
