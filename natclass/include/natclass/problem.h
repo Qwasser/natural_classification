@@ -20,7 +20,7 @@ public:
     //! Construction
     Problem (std::vector<std::map<std::string, int>> & feature_value_mappings);
     Problem (json & j);
-    Problem (json j);
+    Problem (json && j);
 
     Problem () {}
 

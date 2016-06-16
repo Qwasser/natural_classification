@@ -64,6 +64,12 @@ private:
     void encodeData(std::vector<std::vector<std::string>> & data);
 
     void fromJSON(json & j);
+
+    static const std::string DATA_FIELD_NAME;
+    static const std::string PROBLEM_FIELD_NAME;
 };
+
+const std::string DataSet::DATA_FIELD_NAME = "data";
+const std::string DataSet::PROBLEM_FIELD_NAME = "problem";
 
 #endif

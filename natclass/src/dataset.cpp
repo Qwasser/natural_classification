@@ -30,14 +30,14 @@ void DataSet::initData(std::vector<std::vector<std::string>> & data) {
 
 json DataSet::toJSON() const {
     json j;
-    j["problem"] = problem.toJSON();
+    j[PROBLEM_FIELD_NAME] = problem.toJSON();
 
     for (size_t i = 0; i < n_rows; ++i) {
         std::vector<int> row(n_cols);
         for (size_t j = 0; j < n_cols; ++j) {
             row[j] = getValue(i, j);
         }
-        j["data"][std::to_string(i)] = json(row);
+        j[DATA_FIELD_NAME][std::to_string(i)] = json(row);
     }
     return j;
 }
@@ -90,14 +90,14 @@ DataSet::~DataSet() {
 }
 
 void DataSet::fromJSON(json & j) {
-    problem = Problem(json(j["problem"]));
+    problem = Problem(json(j[PROBLEM_FIELD_NAME]));
 
-    n_rows = j["data"].size();
-    n_cols = j["data"]["0"].size();
+    n_rows = j[DATA_FIELD_NAME].size();
+    n_cols = j[DATA_FIELD_NAME]["0"].size();
     initEncodedData();
 
     int row_counter = 0;
-    for (auto& element : j["data"]) {
+    for (auto& element : j[DATA_FIELD_NAME]) {
         for (size_t col_num = 0; col_num < n_cols; ++col_num) {
             encoded_data[col_num][row_counter] = element.at(col_num);
         }
