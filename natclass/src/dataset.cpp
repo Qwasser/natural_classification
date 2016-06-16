@@ -88,3 +88,27 @@ Problem DataSet::getProblem() const {
 DataSet::~DataSet() {
     destroyEncodedData();
 }
+
+void DataSet::fromJSON(json & j) {
+    problem = Problem(json(j["problem"]));
+
+    n_rows = j["data"].size();
+    n_cols = j["data"]["0"].size();
+    initEncodedData();
+
+    int row_counter = 0;
+    for (auto& element : j["data"]) {
+        for (size_t col_num = 0; col_num < n_cols; ++col_num) {
+            encoded_data[col_num][row_counter] = element.at(col_num);
+        }
+        ++row_counter;
+    }
+}
+
+DataSet::DataSet (json & j) {
+    fromJSON(j);
+}
+
+DataSet::DataSet (json && j) {
+    fromJSON(j);
+}

@@ -15,7 +15,8 @@ using json = nlohmann::json;
 class DataSet {
 public:
     //! Deserrialization from json
-    DataSet (json & json_str);
+    DataSet (json & j);
+    DataSet (json && j);
 
     //! Constructs from raw data. Additionally creates problem metadata.
     DataSet (std::vector<std::vector<std::string>> & data, ProblemBuilder::Mode mode = ProblemBuilder::Mode::SEPARATE_VALUES);
@@ -61,6 +62,8 @@ private:
     void destroyEncodedData();
 
     void encodeData(std::vector<std::vector<std::string>> & data);
+
+    void fromJSON(json & j);
 };
 
 #endif

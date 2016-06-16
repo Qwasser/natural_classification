@@ -49,5 +49,5 @@ TEST(dataset_tests, json_test) {
     auto d = data.getData();
     DataSet ds(d);
 
-    std::cout << ds.toJSON() << std::endl;
+    EXPECT_EQ(ds.toJSON().dump(), DataSet(ds.toJSON()).toJSON().dump());
 }
