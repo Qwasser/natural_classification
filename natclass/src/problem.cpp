@@ -92,7 +92,7 @@ Problem::Problem (json & j) {
     fromJSON(j);
 }
 
-Problem::Problem (json j) {
+Problem::Problem (json && j) {
     fromJSON(j);
 }
 
