@@ -55,4 +55,5 @@ private:
     void fromJSON(json & j);
 };
 
+
 #endif
