@@ -18,9 +18,6 @@ public:
     json toJSON() const;
     std::string toString() const;
 
-    const Predicate conclusion;
-    const std::vector<Predicate> premise;
-
     double getConditionalProbability() const;
     double getFisher() const;
     double getYule() const;
@@ -36,6 +33,9 @@ private:
     double conditional_probabiliy;
     double yule_lower_bound;
     double fisher_value;
+
+    Predicate conclusion;
+    std::vector<Predicate> premise;
 };
 
 class RuleBuilder {
