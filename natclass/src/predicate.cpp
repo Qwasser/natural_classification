@@ -5,6 +5,12 @@
 
 Predicate::Predicate(int val, size_t feature, bool sign) : value(val), feature_id(feature), sign(sign) {}
 
+Predicate::Predicate(const Predicate & other) {
+    value = other.value;
+    feature_id = other.feature_id;
+    sign = other.sign;
+}
+
 Predicate::Predicate(std::string str, Problem & p) {
     std::stringstream ss(str);
     ss >> feature_id;
@@ -41,7 +47,7 @@ json Predicate::toJSON() const {
     return j;
 }
 
-std::string Predicate::toString(Problem & p) const {
+std::string Predicate::toString(const Problem & p) const {
     std::stringstream ss;
     ss << feature_id << " is ";
     if (! sign) {
@@ -69,3 +75,11 @@ void Predicate::fromJSON(json & j) {
     feature_id = j[FEATURE_FIELD_NAME];
     sign = j[SIGN_FIELD_NAME];
 }
+
+bool Predicate::operator==(const Predicate &other) const {
+    return (value == other.value) && (feature_id == other.feature_id) && (sign == other.sign);
+}
+
+const std::string Predicate::SIGN_FIELD_NAME = "sign";
+const std::string Predicate::VALUE_FIELD_NAME = "val";
+const std::string Predicate::FEATURE_FIELD_NAME = "feature";

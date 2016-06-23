@@ -112,3 +112,6 @@ DataSet::DataSet (json & j) {
 DataSet::DataSet (json && j) {
     fromJSON(j);
 }
+
+const std::string DataSet::DATA_FIELD_NAME = "data";
+const std::string DataSet::PROBLEM_FIELD_NAME = "problem";

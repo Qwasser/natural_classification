@@ -13,6 +13,10 @@ class Predicate {
 public:
     //! Basic constructor
     Predicate(int val, size_t feature, bool sign);
+    Predicate() {}
+
+    //! Copy constructor
+    Predicate(const Predicate & other);
 
     //! Construction from string representation
     Predicate(std::string str, Problem & p);
@@ -28,7 +32,7 @@ public:
      * Serrialization to human readable string
      * "featrue_id" is {not} "val"
      */
-    std::string toString(Problem & p) const;
+    std::string toString(const Problem & p) const;
 
     //! value getter
     int getValue() const;
@@ -39,6 +43,12 @@ public:
     //! sign getter
     bool getSign() const;
 
+    //! Operators
+    bool operator==(const Predicate &other) const;
+
+    bool operator!=(const Predicate &other) const {
+      return !(*this == other);
+    }
 private:
     int value;
     size_t feature_id;
@@ -50,9 +60,4 @@ private:
     static const std::string VALUE_FIELD_NAME;
     static const std::string FEATURE_FIELD_NAME;
 };
-
-const std::string Predicate::SIGN_FIELD_NAME = "sign";
-const std::string Predicate::VALUE_FIELD_NAME = "val";
-const std::string Predicate::FEATURE_FIELD_NAME = "feature";
-
 #endif
