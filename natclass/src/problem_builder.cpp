@@ -83,3 +83,6 @@ void ProblemBuilder::fromData(std::vector<std::vector<std::string>> & data, Mode
     }
 }
 
+void ProblemBuilder::fromData(std::vector<std::vector<std::string>> && data, Mode mode) {
+    fromData(data, mode);
+}

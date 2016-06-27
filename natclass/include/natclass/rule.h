@@ -46,6 +46,7 @@ public:
     const std::vector<Predicate> & getPremise();
 
     //! Operators
+    //! Ignores criterion values
     bool operator==(const Rule &other) const;
 
     bool operator!=(const Rule &other) const {
@@ -53,9 +54,9 @@ public:
     }
 
 private:
-    double conditional_probabiliy;
-    double yule_lower_bound;
-    double fisher_value;
+    double conditional_probabiliy = 0;
+    double yule_lower_bound = 0;
+    double fisher_value = 0;
 
     Predicate conclusion;
     std::vector<Predicate> premise;

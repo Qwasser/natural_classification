@@ -51,14 +51,14 @@ std::string Rule::toString(const Problem & p) const {
     std::stringstream ss;
 
     for (size_t i = 0; i < premise.size(); ++i) {
-        ss << premise[i].toString(p);
+        ss << '(' << premise[i].toString(p) << ')';
         if (i != premise.size() - 1) {
-            ss << ' & ';
+            ss << " & ";
         }
     }
 
     ss << " => ";
-    ss << conclusion.toString(p);
+    ss << '(' << conclusion.toString(p) << ')';
     return ss.str();
 }
 
@@ -96,10 +96,7 @@ const std::vector<Predicate> & Rule::getPremise() {
 
 bool Rule::operator==(const Rule &other) const {
     return conclusion == other.conclusion &&
-            premise == other.premise &&
-            yule_lower_bound == other.yule_lower_bound &&
-            fisher_value == other.fisher_value &&
-            conditional_probabiliy == other.conditional_probabiliy;
+            premise == other.premise;
 }
 
 const std::string Rule::FISHER_FIELD_NAME = "fisher";

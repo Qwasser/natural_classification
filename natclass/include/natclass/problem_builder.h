@@ -21,6 +21,7 @@ class ProblemBuilder {
 
     //! Extracts features and values from raw data. Builds problem metadata.
     void fromData(std::vector<std::vector<std::string>> & data, Mode mode = SEPARATE_VALUES);
+    void fromData(std::vector<std::vector<std::string>> && data, Mode mode = SEPARATE_VALUES);
 
     //! Adds new feature without values
     void addFeature();
