@@ -72,6 +72,34 @@ private:
 };
 
 class RuleBuilder {
+public:
+    /*!
+     * Sets builder premise and conclusion to premise and conclusion
+     * of given rule
+     */
+    void initFromRule(Rule & r);
+    void initFromRule(Rule && r);
+
+    //! conclusion setter
+    void setConclusion(const Predicate & conclusion);
+    void setConclusion(Predicate && conclusion);
+    void setConclusion(size_t feature_id, int value, bool sign);
+
+    //! Adds predicate to the end of premise
+    void pushToPremise(const Predicate & pred);
+    void pushToPremise(Predicate && pred);
+    void pushToPremise(size_t feature_id, int value, bool sign);
+
+    //! Removes predicate from the end of premise
+    void popFromPremise(const Predicate & pred);
+    void popFromPremise(Predicate && pred);
+
+    //! Gets rule with current premise and conclusion
+    Rule getResult();
+
+private:
+    Predicate conclusion;
+    std::vector<Predicate> premise;
 
 };
 
