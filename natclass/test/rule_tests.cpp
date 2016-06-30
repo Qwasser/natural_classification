@@ -14,6 +14,8 @@ TEST(rule_tests, constructor_test) {
 
     Rule r(premise, conclusion);
 
+    EXPECT_EQ(r.getPremiseLength(), premise.size());
+
     EXPECT_TRUE(r.getPremise() == premise);
     EXPECT_TRUE(r.getConslusion() == conclusion);
 
@@ -93,5 +95,33 @@ TEST(rule_builder_tests, rule_init_test) {
 
     rb.pushToPremise(0, 0, false);
     EXPECT_FALSE(r == rb.getResult());
+}
+
+TEST(rule_builder_tests, pop_back_test) {
+    Rule r = makeTestRule();
+    RuleBuilder rb;
+    rb.initFromRule(r);
+
+    EXPECT_TRUE(r == rb.getResult());
+
+    rb.popFromPremise();
+    EXPECT_FALSE(r == rb.getResult());
+
+    Rule new_rule = rb.getResult();
+
+    for (size_t i = 0; i < new_rule.getPremiseLength(); ++i) {
+        EXPECT_TRUE(r.getPremise()[i] == new_rule.getPremise()[i]);
+    }
+
+    EXPECT_EQ(r.getPremiseLength() - 1, new_rule.getPremiseLength());
+}
+
+TEST(rule_builder_tests, conclusion_set_test) {
+    RuleBuilder rb;
+    rb.setConclusion(0, 0, true);
+
+    Predicate pred(0, 0, true);
+
+    EXPECT_TRUE(pred==rb.getResult().getConslusion());
 }
 

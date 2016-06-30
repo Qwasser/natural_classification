@@ -99,6 +99,10 @@ bool Rule::operator==(const Rule &other) const {
             premise == other.premise;
 }
 
+size_t Rule::getPremiseLength() {
+    return premise.size();
+}
+
 const std::string Rule::FISHER_FIELD_NAME = "fisher";
 const std::string Rule::YULE_FIELD_NAME = "yule";
 const std::string Rule::CONDITIONAL_PROB_FIELD_NAME = "cp";
@@ -131,4 +135,20 @@ void RuleBuilder::pushToPremise(Predicate && pred) {
 
 void RuleBuilder::pushToPremise(size_t feature_id, int value, bool sign) {
     pushToPremise(Predicate(feature_id, value, sign));
+}
+
+void RuleBuilder::setConclusion(const Predicate & pred) {
+    conclusion = pred;
+}
+
+void RuleBuilder::setConclusion(Predicate && pred) {
+    conclusion = pred;
+}
+
+void RuleBuilder::setConclusion(size_t feature_id, int value, bool sign) {
+    conclusion = Predicate(feature_id, value, sign);
+}
+
+void RuleBuilder::popFromPremise() {
+    premise.pop_back();
 }

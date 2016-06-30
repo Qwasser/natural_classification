@@ -45,6 +45,9 @@ public:
     const Predicate & getConslusion();
     const std::vector<Predicate> & getPremise();
 
+    //! Premise length
+    size_t getPremiseLength();
+
     //! Operators
     //! Ignores criterion values
     bool operator==(const Rule &other) const;
@@ -81,8 +84,8 @@ public:
     void initFromRule(Rule && r);
 
     //! conclusion setter
-    void setConclusion(const Predicate & conclusion);
-    void setConclusion(Predicate && conclusion);
+    void setConclusion(const Predicate & pred);
+    void setConclusion(Predicate && pred);
     void setConclusion(size_t feature_id, int value, bool sign);
 
     //! Adds predicate to the end of premise
@@ -91,8 +94,7 @@ public:
     void pushToPremise(size_t feature_id, int value, bool sign);
 
     //! Removes predicate from the end of premise
-    void popFromPremise(const Predicate & pred);
-    void popFromPremise(Predicate && pred);
+    void popFromPremise();
 
     //! Gets rule with current premise and conclusion
     Rule getResult();
