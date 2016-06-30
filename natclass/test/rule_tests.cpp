@@ -84,3 +84,14 @@ TEST(rule_tests, to_string_test) {
     std::cout << r1.toString(p) << std::endl;
 }
 
+TEST(rule_builder_tests, rule_init_test) {
+    Rule r = makeTestRule();
+    RuleBuilder rb;
+    rb.initFromRule(r);
+
+    EXPECT_TRUE(r == rb.getResult());
+
+    rb.pushToPremise(0, 0, false);
+    EXPECT_FALSE(r == rb.getResult());
+}
+

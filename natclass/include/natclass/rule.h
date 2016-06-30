@@ -100,7 +100,6 @@ public:
 private:
     Predicate conclusion;
     std::vector<Predicate> premise;
-
 };
 
 #endif

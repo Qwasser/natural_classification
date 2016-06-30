@@ -104,3 +104,31 @@ const std::string Rule::YULE_FIELD_NAME = "yule";
 const std::string Rule::CONDITIONAL_PROB_FIELD_NAME = "cp";
 const std::string Rule::PREMISE_FIELD_NAME = "premise";
 const std::string Rule::CONCLUSION_FIELD_NAME = "conclusion";
+
+void RuleBuilder::initFromRule(Rule & r) {
+    const std::vector<Predicate> & p = r.getPremise();
+    premise.clear();
+    premise.insert(premise.begin(), p.begin(), p.end());
+
+    conclusion = r.getConslusion();
+}
+
+void RuleBuilder::initFromRule(Rule && r) {
+    initFromRule(r);
+}
+
+Rule RuleBuilder::getResult() {
+    return Rule(premise, conclusion);
+}
+
+void RuleBuilder::pushToPremise(const Predicate & pred) {
+    premise.push_back(pred);
+}
+
+void RuleBuilder::pushToPremise(Predicate && pred) {
+    pushToPremise(pred);
+}
+
+void RuleBuilder::pushToPremise(size_t feature_id, int value, bool sign) {
+    pushToPremise(Predicate(feature_id, value, sign));
+}

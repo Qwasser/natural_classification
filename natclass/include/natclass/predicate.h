@@ -50,9 +50,9 @@ public:
       return !(*this == other);
     }
 private:
-    int value;
-    size_t feature_id;
-    bool sign;
+    int value = 0;
+    size_t feature_id = 0;
+    bool sign = true;
 
     void fromJSON(json & j);
 
